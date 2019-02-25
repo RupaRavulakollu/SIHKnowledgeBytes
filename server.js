@@ -23,10 +23,6 @@ if (process.env.NODE_ENV !== 'production') {
 //-------------------------------------------------------------------------------------------------------------
 
 //-- Code start here ------------------------------------------------------------------------------------------
-app.get('/', (_req, res) => {
-    res.send(`Knowledge Bytes running at ${PORT}`)
-})
-
 app.get('/api', (_req, res) => {
     res.send("Knowledge Bytes for React")
 })
