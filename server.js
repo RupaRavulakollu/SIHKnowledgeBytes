@@ -3,7 +3,8 @@ const path = require('path')
 const session = require('express-session')
 
 //-- Express --------------------------------------------------------------------------------------------------
-require('dotenv').config() // devDependency to setup .env locally
+if (process.env.NODE_ENV !== 'production')
+    require('dotenv').config() // devDependency to setup .env locally
 const app = express()
 const PORT = process.env.PORT
 const server = require('http').Server(app)
