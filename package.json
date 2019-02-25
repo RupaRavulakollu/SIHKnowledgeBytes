@@ -1,0 +1,30 @@
+{
+  "name": "sihknowledgebytes",
+  "version": "1.0.0",
+  "description": "A Knowledge Management portal for DPSUs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RupaRavulakollu/SIHKnowledgeBytes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RupaRavulakollu/SIHKnowledgeBytes/issues"
+  },
+  "homepage": "https://github.com/RupaRavulakollu/SIHKnowledgeBytes#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "morgan": "^1.9.1",
+    "path": "^0.12.7",
+    "pg": "^7.8.1"
+  }
+}
