@@ -1,29 +1,44 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import Login from './pages/Login'
 
 class App extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            title: 'Pinging server',
+            username : '',
+            password: '',
+            errors : {},
         }
     }
 
     componentDidMount() {
-        axios.get('/api')
+        axios.post('/api/whoami')
             .then(res => {
-                this.setState({
-                    title: res.data,
-                })
+                if (res.data) {
+                    this.setState({
+                        username: res.data
+                    })
+                }
             })
             .catch(err => console.log(err))
     }
 
+    setDetails = (username) => {
+        this.setState({
+            username: username
+        })
+    }
+
     render() {
-        return (
-            <h1>{this.state.title}</h1>
-        );
+        if (!this.state.username)
+            return (
+                <Login setDetails={this.setDetails}/>
+            )
+        else {
+            return <div>Logged in</div>
+        }
     }
 }
 
