@@ -90,4 +90,17 @@ api.post('/login', (req, res, next) => { // Security middleware to check whether
     })
 })
 
+api.use((req, res, next) => {
+    if (req.session.user) {
+        next()
+    } else {
+        res.status(401).send({ error: 'You have to be logged in to access this feature' })
+    }
+})
+
+api.post('/logout', (req, res) => {
+    delete req.session.user
+    res.status(200).send({ message: 'You\'ve been successfully logged out' })
+})
+
 module.exports = api;

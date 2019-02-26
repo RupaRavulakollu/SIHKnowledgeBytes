@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
+
 import Login from './pages/Login'
+import NavigationPane from './NavigationPane'
 
 class App extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            username : '',
-            password: '',
-            errors : {},
+            user: window.userDetails,
+            isLoading: true,
         }
     }
 
@@ -17,27 +19,33 @@ class App extends Component {
         axios.post('/api/whoami')
             .then(res => {
                 if (res.data) {
-                    this.setState({
-                        username: res.data
-                    })
+                    window.userDetails = res.data
+                    this.setDetails()
                 }
             })
             .catch(err => console.log(err))
+            .finally(() => {
+                this.setState({
+                    isLoading: false
+                })
+            })
     }
 
-    setDetails = (username) => {
+    setDetails = () => {
         this.setState({
-            username: username
+            user: window.userDetails
         })
     }
 
     render() {
-        if (!this.state.username)
-            return (
-                <Login setDetails={this.setDetails}/>
-            )
+        if (this.state.isLoading) {
+            return <LinearProgress />
+        }
+        else if (!this.state.user) {
+            return <Login setDetails={this.setDetails} />
+        }
         else {
-            return <div>Logged in</div>
+            return <NavigationPane />
         }
     }
 }

@@ -15,6 +15,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
+import { CircularProgress } from '@material-ui/core';
 
 
 
@@ -63,7 +64,8 @@ class Login extends Component {
       password: '',
       showPassword: false,
       error: false,
-      errorText: ''
+      errorText: '',
+      showLoader: false,
     }
   }
 
@@ -82,11 +84,14 @@ class Login extends Component {
 
     if (username && password) {
       var body = { username: this.state.username, password: this.state.password }
-
+      this.setState({
+        showLoader: true
+      })
       axios.post('/api/login', body)
         .then(res => {
           console.log(res.data)
-          this.props.setDetails(res.data)
+          window.userDetails = res.data
+          this.props.setDetails()
         })
         .catch(err => {
           console.log(err)
@@ -99,6 +104,11 @@ class Login extends Component {
               errorText: 'Something went wrong'
             })
           }
+        })
+        .finally(() => {
+          this.setState({
+            showLoader: false
+          })
         })
     } else {
       this.setState({
@@ -158,16 +168,19 @@ class Login extends Component {
               {this.state.errorText}
             </Typography>
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={this.handleLogin}
-              className={classes.submit}
-            >
-              Sign in
-          </Button>
+            {
+              this.state.showLoader ? <div style={{ width: '100%', textAlign: 'center' }}> <CircularProgress /> </div> :
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleLogin}
+                  className={classes.submit}
+                >
+                  {"Sign in"}
+                </Button>
+            }
           </div>
         </Paper>
       </main>
