@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import axios from 'axios';
-import { CircularProgress } from '@material-ui/core';
-
-
-
 
 
 const styles = theme => ({
@@ -53,6 +52,9 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 3,
   },
+  loader: {
+    borderRadius: 5,
+  }
 });
 
 class Login extends Component {
@@ -60,7 +62,7 @@ class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      username: '',
+      email: '',
       password: '',
       showPassword: false,
       error: false,
@@ -79,11 +81,11 @@ class Login extends Component {
 
   handleLogin = () => {
 
-    var username = this.state.username;
+    var email = this.state.email;
     var password = this.state.password;
 
-    if (username && password) {
-      var body = { username: this.state.username, password: this.state.password }
+    if (email && password) {
+      var body = { email: this.state.email, password: this.state.password }
       this.setState({
         showLoader: true
       })
@@ -132,20 +134,20 @@ class Login extends Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
-      </Typography>
+            {"Sign in"}
+          </Typography>
 
 
           <div className={classes.form}>
             <FormControl margin="normal" required fullWidth error={this.state.error}>
-              <InputLabel htmlFor="email">Username</InputLabel>
-              <Input id="username" name="username"
+              <InputLabel htmlFor="email">{"Email"}</InputLabel>
+              <Input id="email" name="email"
                 type={'text'}
-                value={this.state.username}
-                onChange={this.handleChange('username')} />
+                value={this.state.email}
+                onChange={this.handleChange('email')} />
             </FormControl>
             <FormControl margin="normal" required fullWidth error={this.state.error}>
-              <InputLabel htmlFor="adornment-password">Password</InputLabel>
+              <InputLabel htmlFor="adornment-password">{"Password"}</InputLabel>
               <Input
                 id="adornment-password"
                 type={this.state.showPassword ? 'text' : 'password'}
@@ -164,23 +166,22 @@ class Login extends Component {
               />
             </FormControl>
 
-            <Typography>
+            <Typography variant="overline" clas>
               {this.state.errorText}
             </Typography>
 
-            {
-              this.state.showLoader ? <div style={{ width: '100%', textAlign: 'center' }}> <CircularProgress /> </div> :
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={this.handleLogin}
-                  className={classes.submit}
-                >
-                  {"Sign in"}
-                </Button>
-            }
+            <Button
+              type="submit"
+              fullWidth
+              disabled={this.state.showLoader}
+              variant="contained"
+              color="primary"
+              onClick={this.handleLogin}
+              className={classes.submit}
+            >
+              {"Sign in"}
+            </Button>
+          {this.state.showLoader && <LinearProgress color='primary' classes={{root: classes.loader}}/>}
           </div>
         </Paper>
       </main>

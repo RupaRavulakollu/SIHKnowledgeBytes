@@ -47,13 +47,13 @@ api.post('/whoami', (req, res, next) => {
 
 //-- Login Endpoint -------------------------------------------------------------------------------------------
 api.post('/login', (req, res, next) => { // Security middleware to check whether the body is complete 
-    if (req.body.username && req.body.password)
+    if (req.body.email && req.body.password)
         next()
     else
         res.status(400).send({ "error": "The request body is imcomplete" })
 }, (req, res) => { // Verify login credentials
-    var { username, password } = req.body
-    pool.query('SELECT id, password FROM users WHERE username = $1', [username], (err, results) => {
+    var { email, password } = req.body
+    pool.query('SELECT id, password FROM users WHERE email = $1', [email], (err, results) => {
         if (err) {
             console.log(err.toString())
             res.status(500).send({ "error": "Something's Wrong" })
@@ -68,7 +68,7 @@ api.post('/login', (req, res, next) => { // Security middleware to check whether
                 var givenHashed = hash(password, salt);
                 if (actualhashed === givenHashed) {
                     var query = {
-                        text: `SELECT * FROM author WHERE id = $1`,
+                        text: `SELECT * FROM authors WHERE id = $1`,
                         values: [results.rows[0].id]
                     }
                     pool.query(query, (err, result) => {
