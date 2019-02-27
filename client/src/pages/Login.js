@@ -166,7 +166,7 @@ class Login extends Component {
               />
             </FormControl>
 
-            <Typography variant="overline" clas>
+            <Typography variant="overline">
               {this.state.errorText}
             </Typography>
 

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@material-ui/core/styles/withStyles';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
@@ -79,7 +79,7 @@ const styles = theme => ({
         borderBottom: '1px solid #e8e8e8',
     },
     tabsIndicator: {
-        backgroundColor: '#1890ff',
+        backgroundColor: theme.palette.secondary.main,
     },
     tabRoot: {
         textTransform: 'initial',
@@ -99,15 +99,15 @@ const styles = theme => ({
             '"Segoe UI Symbol"',
         ].join(','),
         '&:hover': {
-            color: '#40a9ff',
+            color: theme.palette.primary.main,
             opacity: 1,
         },
         '&$tabSelected': {
-            color: '#1890ff',
+            color: theme.palette.primary.main,
             fontWeight: theme.typography.fontWeightMedium,
         },
         '&:focus': {
-            color: '#40a9ff',
+            color: theme.palette.primary.main,
         },
     },
     tabSelected: {},
@@ -236,6 +236,7 @@ class NavigationPane extends Component {
 
 NavigationPane.propTypes = {
     classes: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(NavigationPane);
