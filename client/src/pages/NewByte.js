@@ -13,7 +13,6 @@ const styles = theme => ({
         paddingBottom: 36
     },
     title: {
-        margin: "10px 0",
         borderRadius: 16,
         fontSize: 40,
         paddingLeft: 8,

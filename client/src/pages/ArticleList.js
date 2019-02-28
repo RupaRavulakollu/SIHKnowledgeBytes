@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-const styles = theme => ({
+const styles = () => ({
     root: {
         color: 'cyan',
     },
@@ -14,7 +14,7 @@ class Article extends Component {
         const { classes } = this.props
 
         return (
-            <h1 className={classes.root}>Article</h1>
+            <h1 className={classes.root}>{this.props.match.params.dpsu}</h1>
         )
     }
 }
