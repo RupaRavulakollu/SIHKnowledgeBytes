@@ -17,6 +17,7 @@ import Add from '@material-ui/icons/Add';
 
 import Home from './pages/Home'
 import Article from './pages/Article'
+import NewByte from './pages/NewByte'
 
 const styles = theme => ({
     root: {
@@ -145,7 +146,7 @@ class NavigationPane extends Component {
                             {"Knowledge Bytes"}
                         </Typography>
 
-                        <Icon className={classes.newButton} title={"New Byte"}>
+                        <Icon className={classes.newButton} title={"New Byte"} component={Link} to='/new-byte'>
                             <Add />
                         </Icon>
 
@@ -226,6 +227,7 @@ class NavigationPane extends Component {
                         <Switch>
                             <Route path="/" component={Home} exact />
                             <Route path="/article" component={Article} exact />
+                            <Route path="/new-byte" component={NewByte} exact />
                         </Switch>
                     </main>
                 </div>

@@ -1,0 +1,10 @@
+.ck {
+    font-family: 'Work Sans', sans-serif;
+    height: -webkit-fill-available;
+}
+
+:root {
+    --ck-border-radius: 16px;
+    --ck-color-focus-border: var(--ck-color-base-border);
+    --ck-inner-shadow: none;
+}
