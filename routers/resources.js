@@ -68,7 +68,8 @@ resources.get('/closed', (req, res) => { //Get my dpsu closed resources
     var query = {
         text:`select r.id, r.name, r.description, r.type, r.duration, r.base_price, r.posted_on, r.deadline, r.photo,
         json_build_object('name', dpsu.name, 'shortname', dpsu.shortname) as dpsu,
-        mod.name as posted_by
+        mod.name as posted_by,
+        (select max(price) from bids where resource=r.id group by resource) as maxbid
         from resources r
         inner join dpsu on dpsu.id = r.dpsu
         inner join authors mod on mod.id = r.posted_by
