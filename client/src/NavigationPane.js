@@ -15,6 +15,8 @@ import Add from '@material-ui/icons/Add';
 
 import Trending from './pages/Trending'
 import NewByte from './pages/NewByte'
+import Snacky from './components/Snacky'
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const styles = theme => ({
     root: {
@@ -78,7 +80,33 @@ const styles = theme => ({
     },
 });
 
+class NewBytePreLoader extends Component {
+    componentDidMount() {
+        axios.post('/api/drafts', {})
+            .then(res => {
+                this.props.history.push(`/new-byte/${res.data.id}`)
+            })
+            .catch(err => {
+                console.log("Error creating draft: ", err)
+                this.callSnacky(err.response.data.error, true)
+            })
+    }
+
+    render() {
+        return <LinearProgress color='primary' />
+    }
+}
+
 class NavigationPane extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            snackyOpen: false,
+            snackyMessage: 'Just saying Hi!',
+            snackyErrorType: false,
+        }
+    }
 
     logout = () => {
         axios.post('/api/logout')
@@ -87,6 +115,25 @@ class NavigationPane extends Component {
                 window.location = '/'
             })
     }
+
+    callSnacky = (message, isError) => {
+        if (isError && !message) {
+            message = "Something's Wrong"
+        }
+        this.setState({
+            snackyMessage: message,
+            snackyOpen: true,
+            snackyErrorType: isError,
+        })
+    }
+
+    handleSnackyClose = (_event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({ snackyOpen: false });
+    };
 
     render() {
         const { classes } = this.props;
@@ -125,9 +172,12 @@ class NavigationPane extends Component {
                             <Route exact path="/home" render={() => (<Redirect to="/trending" />)} />
                             <Route path="/trending" component={Trending} />
                             <Route path="/article" component={() => '<h3>Article</h3>'} exact />
-                            <Route path="/new-byte" component={NewByte} exact />
+                            <Route path="/new-byte" component={NewBytePreLoader} exact />
+                            <Route path="/new-byte/:id" component={NewByte} />
                         </Switch>
                     </main>
+                    {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
+                    <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
                 </div>
             </Router>
         );

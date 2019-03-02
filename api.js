@@ -1,6 +1,8 @@
 const express = require('express')
 const crypto = require('crypto')
 const { Pool } = require('pg')
+const path = require('path')
+const fs = require('fs')
 
 //-- Express --------------------------------------------------------------------------------------------------
 const api = express.Router()
@@ -18,22 +20,19 @@ const pool = new Pool({
 })
 //-------------------------------------------------------------------------------------------------------------
 
-//-- Password Hashing function --------------------------------------------------------------------------------
-function hash(input, salt) {
+
+//-- Code begins here -----------------------------------------------------------------------------------------
+function hash(input, salt) { //- Hashing Function
     var hashed = crypto.pbkdf2Sync(input, salt, 10000, 512, 'sha512');
     return ["pdkdf2", "10000", salt, hashed.toString('hex')].join('$');
 }
-//-------------------------------------------------------------------------------------------------------------
 
-//-- Temporary Hash endpoint ----------------------------------------------------------------------------------
-api.post('/hash', (req, res) => {
+api.post('/hash', (req, res) => { //- Temporary hash endpoint
     var salt = crypto.randomBytes(128).toString('hex')
     res.send(hash(req.body.password, salt));
 })
-//-------------------------------------------------------------------------------------------------------------
 
-//-- Endpoint to check whether the cookie is valid ------------------------------------------------------------
-api.post('/whoami', (req, res, next) => {
+api.post('/whoami', (req, res, next) => { //- Who am I?
     if (req.session.user) {
         res.send({ name: req.session.user.name })
     }
@@ -43,15 +42,13 @@ api.post('/whoami', (req, res, next) => {
 }, (req, res) => {
     res.send(null)
 })
-//-------------------------------------------------------------------------------------------------------------
 
-//-- Login Endpoint -------------------------------------------------------------------------------------------
-api.post('/login', (req, res, next) => { // Security middleware to check whether the body is complete 
+api.post('/login', (req, res, next) => { //- Login
     if (req.body.email && req.body.password)
         next()
     else
         res.status(400).send({ "error": "The request body is imcomplete" })
-}, (req, res) => { // Verify login credentials
+}, (req, res) => {
     var { email, password } = req.body
     pool.query('SELECT id, password FROM users WHERE email = $1', [email], (err, results) => {
         if (err) {
@@ -90,7 +87,7 @@ api.post('/login', (req, res, next) => { // Security middleware to check whether
     })
 })
 
-api.use((req, res, next) => {
+api.use((req, res, next) => { //- CHECKPOINT - No logged off user can pass this middleware
     if (req.session.user) {
         next()
     } else {
@@ -98,9 +95,23 @@ api.use((req, res, next) => {
     }
 })
 
-api.post('/logout', (req, res) => {
+api.post('/logout', (req, res) => { //- Log out
     delete req.session.user
     res.status(200).send({ message: 'You\'ve been successfully logged out' })
 })
+
+
+api.use('/drafts', require('./routers/drafts'))
+api.use('/byte', require('./routers/byte'))
+
+api.get('/uploads/:folder/:file', (req, res) => {
+    var filePath = path.join(__dirname, 'uploads', req.params.folder, req.params.file)
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath)
+    } else {
+        res.status(404).send({ error: "File not found" })
+    }
+})
+//-------------------------------------------------------------------------------------------------------------
 
 module.exports = api;
