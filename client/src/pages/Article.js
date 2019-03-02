@@ -6,14 +6,11 @@ import Chip from '@material-ui/core/Chip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
 import Radio from '@material-ui/core/Radio';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import Dot from '../components/Dot';
 import green from '@material-ui/core/colors/green';
 import TextField from '@material-ui/core/TextField';
 import Fab from '@material-ui/core/Fab';
 import Button from '@material-ui/core/Button';
-import AddIcon from '@material-ui/icons/Add';
 import NearMe from '@material-ui/icons/NearMe';
 import StarRate from '@material-ui/icons/StarRate';
 
@@ -76,20 +73,50 @@ const styles = theme => ({
         flexDirection: 'row',
         justifyContent: 'center',
     },
-    textField: {
-        width: '600px',
-        marginLeft: '20PX',
-    },
     commentContainer: {
         display: 'flex',
+    },
+    commentTF: {
+        flexGrow: 1
     },
     fab: {
         margin: theme.spacing.unit,
     },
-    extendedIcon: {
-        marginRight: theme.spacing.unit,
-        marginLeft: '7px',
-        size: '30px'
+    flexBox: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    commentSheet: {
+        padding: '0 8px',
+    },
+    hr: {
+        border: 0,
+        margin: "16px 0",
+        height: 1,
+        backgroundImage: "-webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0)",
+    },
+    '@keyframes blink': {
+        '0%': { opacity: 0.2 },
+        '30%': { opacity: 1 },
+        '100%': { opacity: 0.2 },
+    },
+    loadingDots: {
+        display: 'flex',
+        flexDirection: 'row',
+        margin: 'auto'
+    },
+    loadingDot: {
+        background: theme.palette.secondary.dark,
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        margin: '0 4px',
+        animationName: 'blink',
+        animationIterationCount: 'infinite',
+        animationDuration: '1s',
+    },
+    commentDate: {
+        fontSize: '0.75rem',
     },
 })
 
@@ -102,12 +129,12 @@ class Article extends Component {
             comments: [],
             isFetching: true,
             isCommentsFetching: true,
-            isRatingsFetching: true,
             myRating: null,
-            myComment: null,
+            myComment: '',
             snackyOpen: false,
             snackyMessage: 'Just saying Hi!',
             snackyErrorType: false,
+            isCommenting: false,
         }
     }
 
@@ -126,6 +153,7 @@ class Article extends Component {
             })
             .catch(err => {
                 console.log(err)
+                this.callSnacky(err.response.data.error, true)
             })
             .finally(() => {
                 this.setState({
@@ -138,16 +166,34 @@ class Article extends Component {
                     comments: res.data
                 })
             })
+            .catch(err => {
+                console.log(err)
+                this.callSnacky(err.response.data.error, true)
+            })
+            .finally(() => {
+                this.setState({
+                    isCommentsFetching: false,
+                })
+            })
         axios.get(`/api/bytes/${this.props.match.params.id}/rating`)
             .then(res => {
                 this.setState({
                     rating: res.data.rating,
                 })
             })
+            .catch(err => {
+                console.log(err)
+                this.callSnacky(err.response.data.error, true)
+            })
     }
 
     getDate = (epoch) => {
         return new Date(parseInt(epoch)).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    }
+
+    getDateTime = (epoch) => {
+        return new Date(parseInt(epoch)).toLocaleString('en-IN', 
+        { day: '2-digit', month: 'short', year: 'numeric', hour12: true, hour: '2-digit', minute: '2-digit'})
     }
 
     handleChange = event => {
@@ -157,9 +203,20 @@ class Article extends Component {
         });
     }
 
+    handleCommentChange = event => {
+        this.setState({
+            myComment: event.target.value,
+        })
+    }
+
     comment = () => {
         if (this.state.myComment) {
-            axios.post(`/api/bytes/${this.props.match.params.id}/comment`, { comment: this.state.myComment })
+            var myComment = this.state.myComment
+            this.setState({
+                myComment: '',
+                isCommenting: true
+            })
+            axios.post(`/api/bytes/${this.props.match.params.id}/comment`, { comment: myComment })
                 .then(res => {
                     this.setState(prevState => ({
                         comments: [res.data, ...prevState.comments],
@@ -168,6 +225,14 @@ class Article extends Component {
                 .catch(err => {
                     console.log("Error posting comment: ", err)
                     this.callSnacky(err.response.data.error, true)
+                    this.setState({
+                        myComment: myComment,
+                    })
+                })
+                .finally(() => {
+                    this.setState({
+                        isCommenting: false
+                    })
                 })
         }
     }
@@ -221,7 +286,7 @@ class Article extends Component {
                     <Typography className={classes.description}>
                         {article.description}
                     </Typography>
-                    <div className={classes.infoWrap}>
+                    <div className={classes.flexBox}>
                         <div className={classes.info}>
                             <Typography>
                                 {article.author.name}
@@ -230,11 +295,14 @@ class Article extends Component {
                                 {this.getDate(article.date)}
                             </Typography>
                         </div>
-                        {this.state.rating.count &&
-                            <div>
-                                <StarRate />
-                                <Typography variant='h3'>
-                                    {`Rated ${Number((this.state.rating.value).toFixed(1))}/10 by ${this.state.rating.count} readers`}
+                        {this.state.rating && this.state.rating.count &&
+                            <div className={classes.flexBox} >
+                                <StarRate style={{ color: '#FFBF00', margin: "0 10px 0 15px" }} />
+                                <Typography variant='h6'>
+                                    {`${Number((this.state.rating.value).toFixed(1))}/10`}
+                                </Typography>
+                                <Typography variant="subtitle1" style={{ marginLeft: 5 }}>
+                                    {`by ${this.state.rating.count} readers`}
                                 </Typography>
                             </div>
                         }
@@ -257,10 +325,9 @@ class Article extends Component {
                         ))}
                     </div>
 
-                    <div style={{ textAlign: 'center' }}>
-                        <h2>Rate the article</h2>
+                    <div style={{ textAlign: 'center', margin: 10, }}>
+                        <Typography variant='h5'>Rate the article</Typography>
                         <div className={classes.radioContainer}>
-
                             <Radio
                                 checked={this.state.myRating === 1}
                                 onChange={this.handleChange}
@@ -341,34 +408,43 @@ class Article extends Component {
                         <Dot />
                         <Dot />
                     </div>
-                    <h2>Comments</h2>
-                    <div>
-                        <h5>{user.name}</h5>
-                        <h4>Comments read only</h4>
-                        {/* <TextField
-                        disabled
-                        id="outlined-disabled"
-                        label={user.name+"    timing"}
-                        defaultValue="Hello World"
-                        className={classes.textField}
-                        margin="normal"
-                        variant="outlined"
-                    /> */}
-                    </div>
-                    <div className={classes.commentContainer}>
-                        <TextField
-                            id="outlined-comment-input"
-                            placeholder="Write a comment"
-                            className={classes.textField}
-                            type="text"
-                            name="comment"
-                            margin="dense"
-                            variant="outlined"
-
-                        />
-                        <Fab size='medium' color="primary" className={classes.fab}>
-                            <NearMe className={classes.extendedIcon} />
-                        </Fab>
+                    <div className={classes.commentSection}>
+                        <Typography>Comments</Typography>
+                        <div className={classes.commentContainer}>
+                            <TextField
+                                multiline
+                                id="outlined-comment-input"
+                                placeholder="Write a comment"
+                                className={classes.commentTF}
+                                type="text"
+                                name="comment"
+                                margin="dense"
+                                variant="outlined"
+                                value={this.state.myComment}
+                                onChange={this.handleCommentChange}
+                            />
+                            {/* {this.state.isCommenting ?
+                                <div className={classes.loadingDots}>
+                                    <div className={classes.loadingDot} />
+                                    <div className={classes.loadingDot} />
+                                    <div className={classes.loadingDot} />
+                                </div>
+                                : */}
+                            <Fab size='medium' color="primary" className={classes.fab} onClick={this.comment} disabled={this.state.isCommenting}>
+                                <NearMe />
+                            </Fab>
+                            {/* } */}
+                        </div>
+                        {!this.state.isCommentsFetching &&
+                            this.state.comments.map(comment => (
+                                <div key={comment.id} className={classes.commentSheet}>
+                                    <hr className={classes.hr} />
+                                    <Typography color='primary'>{`${comment.posted_by.name} (${comment.posted_by.dpsu.toUpperCase()})`}</Typography>
+                                    <Typography color='default' className={classes.commentDate}>{`${this.getDateTime(comment.posted_on)}`}</Typography>
+                                    <Typography className={classes.commentBox} variant='body1'>{comment.comment}</Typography>
+                                </div>
+                            ))
+                        }
                     </div>
                     {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
                     <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />

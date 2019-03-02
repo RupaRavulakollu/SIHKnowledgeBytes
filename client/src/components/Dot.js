@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const styles = theme => ({
     dot: {
-        background: theme.palette.secondary.dark,
+        background: theme.palette.primary.dark,
         width: 8,
         height: 8,
         borderRadius: '50%',

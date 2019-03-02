@@ -48,7 +48,8 @@ bytes.get('/:id/comments', (req, res) => { //Get all comments
         from comments c
         inner join authors auth on auth.id = c.posted_by
         inner join dpsu on dpsu.id = auth.dpsu
-        where c.article=$1`,
+        where c.article=$1
+        order by posted_on desc`,
         values: [req.params.id],
     }
     pool.query(query, (err, result) => {
