@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -51,7 +52,7 @@ const styles = theme => ({
   tabSelected: {},
 });
 
-class App extends Component {
+class Trending extends Component {
 
   constructor(props) {
     super(props);
@@ -63,6 +64,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.props.showSearchAndNew()
     var index = this.state.dpsus.findIndex(d => d === window.location.pathname.replace('/trending/', ''))
     this.setState({
       value: index + 1,
@@ -182,4 +184,9 @@ class App extends Component {
   }
 }
 
-export default withStyles(styles)(App);
+Trending.propTypes = {
+  classes: PropTypes.object.isRequired,
+  showSearchAndNew: PropTypes.func.isRequired
+};
+
+export default withStyles(styles)(Trending);

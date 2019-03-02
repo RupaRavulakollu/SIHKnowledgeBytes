@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 import { withStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-const styles = theme => ({
+const styles = () => ({
     container: {
         cursor: 'pointer',
+        textDecoration: 'none',
     },
     title: {
         fontWeight: 500,
@@ -29,6 +31,8 @@ class ArticleCard extends Component {
         return (
             <Grid item key={post.id} xs={12} md={6}
                 className={classes.container}
+                component={Link}
+                to={{pathname: `/byte/${post.id}`}}
             >
                 <Typography variant="h5" className={classes.title}>
                     {post.title}
@@ -44,7 +48,7 @@ class ArticleCard extends Component {
                         {new Date(post.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
                     </Typography>
                 </div>
-            </Grid >
+            </Grid>
         )
     }
 }
