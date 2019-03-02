@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles'
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
 
 import Dot from '../components/Dot'
@@ -96,7 +96,7 @@ class Article extends Component {
         const { article, isFetching } = this.state
 
         return (
-            isFetching ? <CircularProgress /> :
+            isFetching ? <LinearProgress /> :
                 <div className={classes.container}>
                     <Typography variant='h4' className={classes.title}>
                         {article.title}
