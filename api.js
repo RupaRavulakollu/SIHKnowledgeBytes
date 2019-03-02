@@ -74,7 +74,7 @@ api.post('/login', (req, res, next) => { //- Login
                 if (actualhashed === givenHashed) {
                     var query = {
                         text: `SELECT auth.id, auth.name, auth.designation, auth.moderator,
-                        dpsu.name as dpsu_name, dpsu.shortname as dpsu_shortname
+                        auth.dpsu, dpsu.name as dpsu_name, dpsu.shortname as dpsu_shortname
                         FROM authors auth 
                         INNER JOIN dpsu ON dpsu.id = auth.dpsu
                         WHERE auth.id = $1`,
@@ -122,6 +122,7 @@ api.post('/logout', (req, res) => { //- Log out
 
 api.use('/drafts', require('./routers/drafts'))
 api.use('/bytes', require('./routers/bytes'))
+api.use('/resources', require('./routers/resources'))
 
 api.get('/uploads/:folder/:file', (req, res) => {
     var filePath = path.join(__dirname, 'uploads', req.params.folder, req.params.file)
