@@ -115,6 +115,8 @@ resources.post('/', (req, res, next) => { //Post new resource
         }
     })
 })
+
+resources.use(require('./bid.js'))
 //-------------------------------------------------------------------------------------------------------------
 
 module.exports = resources
