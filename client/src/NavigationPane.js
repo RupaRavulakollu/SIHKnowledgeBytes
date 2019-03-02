@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Hidden from '@material-ui/core/Hidden';
 import Button from "@material-ui/core/Button";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import Search from '@material-ui/icons/SearchRounded';
 import Add from '@material-ui/icons/Add';
@@ -16,8 +17,9 @@ import Add from '@material-ui/icons/Add';
 import Trending from './pages/Trending'
 import NewByte from './pages/NewByte'
 import Snacky from './components/Snacky'
-import LinearProgress from "@material-ui/core/LinearProgress";
 import Article from './pages/Article'
+import ModeratorHome from "./pages/ModeratorHome";
+import Resources from "./pages/Resources";
 
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -28,7 +30,9 @@ const styles = theme => ({
     root: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
-        height: '100%',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
     },
     topBar: {
         boxShadow: '0 4px 12px 0 rgba(0,0,0,.05)'
@@ -96,6 +100,7 @@ const styles = theme => ({
     content: {
         width: '75%',
         margin: 'auto',
+        flexGrow: 1,
         [theme.breakpoints.down("md")]: {
             width: '100%',
         }
@@ -190,6 +195,7 @@ class NavigationPane extends Component {
         const { classes } = this.props;
         const { showSearchAndNew } = this.state;
         const { anchorEl } = this.state;
+        const user = window.userDetails
 
         return (
             <Router>
@@ -198,7 +204,7 @@ class NavigationPane extends Component {
                         <div className={classes.innerContainer}>
                             <div className={classes.titleContainer}>
                                 <Typography className={classes.title} title={"Knowledge Bytes"}
-                                    component={Link} to='/trending'
+                                    component={Link} to='/'
                                     onClick={this.showSearchAndNew}>
                                     {"Knowledge Bytes"}
                                 </Typography>
@@ -249,8 +255,22 @@ class NavigationPane extends Component {
                     </div>
                     <main className={classes.content}>
                         <Switch>
-                            <Route exact path="/" render={() => (<Redirect to="/trending" />)} />
-                            <Route exact path="/home" render={() => (<Redirect to="/trending" />)} />
+                            {
+                                user.moderator ?
+                                    <Route exact path="/" component={ModeratorHome} />
+                                    :
+                                    <Route exact path="/" render={() => (<Redirect to="/trending" />)} />
+                            }
+                            {
+                                user.moderator ?
+                                    <Route exact path="/home" component={ModeratorHome} />
+                                    :
+                                    <Route exact path="/home" render={() => (<Redirect to="/trending" />)} />
+                            }
+                            {
+                                user.moderator &&
+                                <Route path='/resources' component={Resources} />
+                            }
                             <Route path="/trending" render={(props) => (<Trending  {...props} showSearchAndNew={this.showSearchAndNew} />)} />
                             <Route path="/profile" component={Profile} exact />
                             <Route path="/byte/:id" component={Article} exact />
@@ -261,7 +281,7 @@ class NavigationPane extends Component {
                     {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
                     <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
                 </div>
-            </Router >
+            </Router>
         );
     }
 }
