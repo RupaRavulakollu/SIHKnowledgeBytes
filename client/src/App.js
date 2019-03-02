@@ -4,6 +4,8 @@ import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import withTheme from '@material-ui/core/styles/withTheme';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 import Login from './pages/Login'
 import NavigationPane from './NavigationPane'
@@ -72,8 +74,9 @@ class App extends Component {
                     <Login setDetails={this.setDetails} />
                 }
                 {this.state.user && !this.state.isLoading &&
-                    <NavigationPane />
-
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <NavigationPane />
+                    </MuiPickersUtilsProvider>
                 }
             </MuiThemeProvider>
         )
