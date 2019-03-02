@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Fab from '@material-ui/core/Fab';
 import CKEditor from '@ckeditor/ckeditor5-react';
@@ -26,19 +27,26 @@ const styles = theme => ({
         margin: "24px 0",
     },
     fab: {
-        position: 'fixed',
-        right: 10,
-        bottom: 10,
+        margin: 0,
+        right: 20,
+        bottom: 20,
+        display: "flex",
+        flexDirection: "column",
+        position: "absolute",
     },
-    fab2: {
-        position: 'fixed',
-        right: 10,
-        bottom: 80,
+    fabMoveUp: {
+        transform: 'translate3d(0, -70px, 0)',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.enteringScreen,
+            easing: theme.transitions.easing.easeOut,
+        }),
     },
-    fab3: {
-        position: 'fixed',
-        right: 10,
-        bottom: 150,
+    fabMoveDown: {
+        transform: 'translate3d(0, 0, 0)',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.leavingScreen,
+            easing: theme.transitions.easing.sharp,
+        }),
     },
 })
 
@@ -52,8 +60,8 @@ class NewByte extends Component {
             snackyOpen: false,
             snackyMessage: 'Just saying Hi!',
             snackyErrorType: false,
+            savedToServer: false,
         }
-        this.savedToServer = false
     }
 
     componentDidMount() {
@@ -79,7 +87,7 @@ class NewByte extends Component {
         //Listen for unload
         window.addEventListener('beforeunload', event => {
             event.preventDefault()
-            if (!this.savedToServer) {
+            if (!this.state.savedToServer) {
                 event.returnValue = "You have unsaved changes. Do you want to leave this page and discard your changes or stay on this page?"
                 return "You have unsaved changes. Do you want to leave this page and discard your changes or stay on this page?"
             }
@@ -96,6 +104,10 @@ class NewByte extends Component {
 
     saveDraft = () => {
         var content = this.editor.getData()
+        this.setState({
+            savingDraft: true,
+            initialContent: content,
+        })
         console.log(content)
         if (!this.state.title) {
             this.callSnacky("Please enter a title to save the draft", true)
@@ -111,20 +123,24 @@ class NewByte extends Component {
                 .then((res) => {
                     this.setState({
                         title: res.data.title,
-                        initialContent: res.data.content
+                        initialContent: res.data.content,
+                        savedToServer: true,
                     })
-                    this.savedToServer = true
-                    this.callSnacky("Saved")
                 })
                 .catch(err => {
                     console.log('Error saving draft: ', err)
                     this.callSnacky(err.response.data.error, true)
                 })
+                .finally(() => {
+                    this.setState({
+                        savingDraft: false,
+                    })
+                })
         }
     }
 
     publishDraft = () => {
-        if (!this.savedToServer) {
+        if (!this.state.savedToServer) {
             this.callSnacky("Please save before publishing", true)
         }
         else {
@@ -166,6 +182,7 @@ class NewByte extends Component {
 
     render() {
         const { classes } = this.props
+        const fabClassName = classNames(classes.fab, this.state.snackyOpen ? classes.fabMoveUp : classes.fabMoveDown);
         return (
             <div>
                 {this.state.id ?
@@ -175,8 +192,8 @@ class NewByte extends Component {
                             value={this.state.title}
                             placeholder={"Byte Title"}
                             onChange={event => {
-                                this.savedToServer = false
                                 this.setState({
+                                    savedToServer: false,
                                     title: event.target.value,
                                 })
                             }}
@@ -190,23 +207,33 @@ class NewByte extends Component {
                                 console.log('Editor is ready to use!', editor, this.editor);
                             }}
                             onChange={() => {
-                                this.savedToServer = false
+                                if (this.state.savedToServer) {
+                                    this.setState({
+                                        savedToServer: false,
+                                    })
+                                }
                             }}
+                            disabled={this.state.savingDraft}
                         />
-                        <Fab onClick={this.saveDraft} color='primary' className={classes.fab}>
-                            <Save />
-                        </Fab>
-                        <Fab onClick={this.publishDraft} color='primary' className={classes.fab2}>
-                            <Publish />
-                        </Fab>
-                        <Fab onClick={() => {
-                            this.deleteDraft()
-                            window.location = '/'
-                        }}
-                            className={classes.fab3}
-                        >
-                            <Delete />
-                        </Fab>
+                        <div className={fabClassName}>
+                            <Fab onClick={() => {
+                                this.deleteDraft()
+                                window.location = '/'
+                            }}
+                                style={{ margin: "8px 0", }}
+                            >
+                                <Delete />
+                            </Fab>
+                            {!this.state.savedToServer ?
+                                <Fab onClick={this.saveDraft} color='primary' style={{ margin: "8px 0", }}>
+                                    <Save />
+                                </Fab>
+                                :
+                                <Fab onClick={this.publishDraft} color='primary' style={{ margin: "8px 0", }}>
+                                    <Publish />
+                                </Fab>
+                            }
+                        </div>
                         {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
                         <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
                     </div>
