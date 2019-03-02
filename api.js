@@ -34,7 +34,15 @@ api.post('/hash', (req, res) => { //- Temporary hash endpoint
 
 api.post('/whoami', (req, res, next) => { //- Who am I?
     if (req.session.user) {
-        res.send({ name: req.session.user.name })
+
+        var user = {
+            name: req.session.user.name,
+            dpsuName: req.session.user.dpsu_name,
+            dpsuShortName: req.session.user.dpsu_shortname,
+            moderator: req.session.user.moderator,
+            designation: req.session.user.designation
+        }
+        res.status(200).send(user)
     }
     else {
         next()
@@ -65,7 +73,11 @@ api.post('/login', (req, res, next) => { //- Login
                 var givenHashed = hash(password, salt);
                 if (actualhashed === givenHashed) {
                     var query = {
-                        text: `SELECT * FROM authors WHERE id = $1`,
+                        text: `SELECT auth.id, auth.name, auth.designation, auth.moderator,
+                        dpsu.name as dpsu_name, dpsu.shortname as dpsu_shortname
+                        FROM authors auth 
+                        INNER JOIN dpsu ON dpsu.id = auth.dpsu
+                        WHERE auth.id = $1`,
                         values: [results.rows[0].id]
                     }
                     pool.query(query, (err, result) => {
@@ -76,7 +88,14 @@ api.post('/login', (req, res, next) => { //- Login
                         else {
                             var dbResults = result.rows[0]
                             req.session.user = dbResults
-                            res.status(200).send({ name: dbResults.name })
+                            var user = {
+                                name: dbResults.name,
+                                dpsuName: dbResults.dpsu_name,
+                                dpsuShortName: dbResults.dpsu_shortname,
+                                moderator: dbResults.moderator,
+                                designation: dbResults.designation
+                            }
+                            res.status(200).send(user)
                         }
                     })
                 } else {
