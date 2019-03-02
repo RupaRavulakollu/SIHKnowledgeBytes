@@ -108,7 +108,11 @@ class NewByte extends Component {
             }
             console.log(body)
             axios.put('/api/drafts', body)
-                .then(() => {
+                .then((res) => {
+                    this.setState({
+                        title: res.data.title,
+                        initialContent: res.data.content
+                    })
                     this.savedToServer = true
                     this.callSnacky("Saved")
                 })

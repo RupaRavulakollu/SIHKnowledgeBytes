@@ -124,7 +124,7 @@ drafts.put('/', (req, res, next) => { //Update existing Draft
             if (result.rows.length === 0)
                 res.status(404).send({ error: "The requested draft isn't found" })
             else
-                res.send({ id: result.rows[0].id })
+                res.send({ id: result.rows[0].id, title: result.rows[0].title, content: result.rows[0].content })
         }
     })
 })
@@ -169,15 +169,15 @@ drafts.post('/publish', (req, res, next) => { //Publish the draft as article
     else next()
 }, (req, res, next) => { //Check authenticity
     pool.query('select author from drafts where id=$1', [req.body.id], (err, result) => {
-        if(err) {
+        if (err) {
             console.log("Error authorizing draft publish: ", err)
-            res.status(500).send({error: 'Couldn\'t authorize your request'})
+            res.status(500).send({ error: 'Couldn\'t authorize your request' })
         }
         else {
             if (result.rows.length === 0)
                 res.status(404).send({ error: "The requested draft isn't found" })
-            else if(result.rows[0].author !== req.session.user.id)
-                res.status(403).send({error: "You aren't authorized to publish this draft"})
+            else if (result.rows[0].author !== req.session.user.id)
+                res.status(403).send({ error: "You aren't authorized to publish this draft" })
             else next()
         }
     })
@@ -193,9 +193,9 @@ drafts.post('/publish', (req, res, next) => { //Publish the draft as article
         values: [req.body.id],
     }
     pool.query(query, (err, result) => {
-        if(err) {
+        if (err) {
             console.log("Error publishing article: ", err)
-            res.status(500).send({error: "Couldn\'t publish your article"})
+            res.status(500).send({ error: "Couldn\'t publish your article" })
         }
         else {
             res.send(result.rows[0])
