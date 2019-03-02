@@ -102,7 +102,7 @@ api.post('/logout', (req, res) => { //- Log out
 
 
 api.use('/drafts', require('./routers/drafts'))
-api.use('/byte', require('./routers/byte'))
+api.use('/bytes', require('./routers/bytes'))
 
 api.get('/uploads/:folder/:file', (req, res) => {
     var filePath = path.join(__dirname, 'uploads', req.params.folder, req.params.file)

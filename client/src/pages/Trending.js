@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -8,6 +9,7 @@ import Grid from '@material-ui/core/Grid'
 
 import ArticleList from './ArticleList'
 import ArticleCard from '../components/ArticleCard'
+import Snacky from '../components/Snacky'
 
 const styles = theme => ({
   gridContainer: {
@@ -60,6 +62,9 @@ class Trending extends Component {
       featuredPosts: [],
       value: 0,
       dpsus: ['hal', 'bel', 'bdl', 'beml', 'midhani', 'mdl', 'grse', 'gsl', 'hsl'],
+      snackyOpen: false,
+      snackyMessage: 'Just saying Hi!',
+      snackyErrorType: false,
     }
   }
 
@@ -68,75 +73,41 @@ class Trending extends Component {
     var index = this.state.dpsus.findIndex(d => d === window.location.pathname.replace('/trending/', ''))
     this.setState({
       value: index + 1,
-      featuredPosts: [
-        {
-          id: '1234-5678-1234-5678',
-          title: 'How to make a quality steel bend',
-          description: 'In bibendum nisi ut molestie cursus. Maecenas in justo lectus. Nunc aliquam, odio non aliquam eleifend, ante magna venenatis erat, sit amet pellentesque purus magna rhoncus arcu. Fusce id vehicula nunc. In id est vitae justo consectetur imperdiet. Vestibulum volutpat eros a dolor pellentesque pretium. Pellentesque tincidunt viverra malesuada. Nullam eu magna sed enim sollicitudin porttitor gravida quis lacus.',
-          author: {
-            name: 'Mark Allen',
-            dpsu: 'Goa Shipyard Limited'
-          },
-          date: 1551241280629,
-        },
-        {
-          id: '5678-1234-5678-1234',
-          title: 'Thing I wish I knew before starting my first gear development',
-          description: 'Aenean semper a sem quis semper. Cras sit amet elit vestibulum, lacinia nibh eu, pretium augue. Curabitur lacinia aliquet justo, et mattis tellus. Nam cursus id libero ac pretium. Suspendisse at aliquam nunc. Sed suscipit sem at sapien consectetur, a rhoncus metus laoreet. Fusce vitae tortor auctor, lobortis lorem in, efficitur dolor. Maecenas in ligula eu risus facilisis dictum et quis odio. Etiam dapibus, massa eu accumsan venenatis, turpis dolor laoreet enim, nec tempus tortor urna ac ante. Nam sed metus ut augue gravida ultricies.',
-          author: {
-            name: 'Steven McGrath',
-            dpsu: 'Hindustan Aeronautics Limited'
-          },
-          date: 1551241280629,
-        },
-        {
-          id: '1234-5678-1234-5678',
-          title: 'How to make a quality steel bend',
-          description: 'In bibendum nisi ut molestie cursus. Maecenas in justo lectus. Nunc aliquam, odio non aliquam eleifend, ante magna venenatis erat, sit amet pellentesque purus magna rhoncus arcu. Fusce id vehicula nunc. In id est vitae justo consectetur imperdiet. Vestibulum volutpat eros a dolor pellentesque pretium. Pellentesque tincidunt viverra malesuada. Nullam eu magna sed enim sollicitudin porttitor gravida quis lacus.',
-          author: {
-            name: 'Mark Allen',
-            dpsu: 'Goa Shipyard Limited'
-          },
-          date: 1551241280629,
-        },
-        {
-          id: '5678-1234-5678-1234',
-          title: 'Thing I wish I knew before starting my first gear development',
-          description: 'Aenean semper a sem quis semper. Cras sit amet elit vestibulum, lacinia nibh eu, pretium augue. Curabitur lacinia aliquet justo, et mattis tellus. Nam cursus id libero ac pretium. Suspendisse at aliquam nunc. Sed suscipit sem at sapien consectetur, a rhoncus metus laoreet. Fusce vitae tortor auctor, lobortis lorem in, efficitur dolor. Maecenas in ligula eu risus facilisis dictum et quis odio. Etiam dapibus, massa eu accumsan venenatis, turpis dolor laoreet enim, nec tempus tortor urna ac ante. Nam sed metus ut augue gravida ultricies.',
-          author: {
-            name: 'Steven McGrath',
-            dpsu: 'Hindustan Aeronautics Limited'
-          },
-          date: 1551241280629,
-        },
-        {
-          id: '1234-5678-1234-5678',
-          title: 'How to make a quality steel bend',
-          description: 'In bibendum nisi ut molestie cursus. Maecenas in justo lectus. Nunc aliquam, odio non aliquam eleifend, ante magna venenatis erat, sit amet pellentesque purus magna rhoncus arcu. Fusce id vehicula nunc. In id est vitae justo consectetur imperdiet. Vestibulum volutpat eros a dolor pellentesque pretium. Pellentesque tincidunt viverra malesuada. Nullam eu magna sed enim sollicitudin porttitor gravida quis lacus.',
-          author: {
-            name: 'Mark Allen',
-            dpsu: 'Goa Shipyard Limited'
-          },
-          date: 1551241280629,
-        },
-        {
-          id: '5678-1234-5678-1234',
-          title: 'Thing I wish I knew before starting my first gear development',
-          description: 'Aenean semper a sem quis semper. Cras sit amet elit vestibulum, lacinia nibh eu, pretium augue. Curabitur lacinia aliquet justo, et mattis tellus. Nam cursus id libero ac pretium. Suspendisse at aliquam nunc. Sed suscipit sem at sapien consectetur, a rhoncus metus laoreet. Fusce vitae tortor auctor, lobortis lorem in, efficitur dolor. Maecenas in ligula eu risus facilisis dictum et quis odio. Etiam dapibus, massa eu accumsan venenatis, turpis dolor laoreet enim, nec tempus tortor urna ac ante. Nam sed metus ut augue gravida ultricies.',
-          author: {
-            name: 'Steven McGrath',
-            dpsu: 'Hindustan Aeronautics Limited'
-          },
-          date: 1551241280629,
-        },
-
-      ],
     })
+    axios.get('/api/bytes')
+      .then(res => {
+        this.setState({
+          featuredPosts: res.data,
+        })
+      })
+      .catch(err => {
+        console.log("Error getting all bytes: ", err)
+        this.callSnacky(err.response.data.error, true)
+      })
   }
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
+
+  callSnacky = (message, isError) => {
+    if (isError && !message) {
+        message = "Something's Wrong"
+    }
+    this.setState({
+        snackyMessage: message,
+        snackyOpen: true,
+        snackyErrorType: isError,
+    })
+}
+
+handleSnackyClose = (_event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+
+    this.setState({ snackyOpen: false });
+};
 
   render() {
     const { classes } = this.props
@@ -179,6 +150,8 @@ class Trending extends Component {
             </Grid>
           }} />
         </main>
+        {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
+        <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
       </div>
     );
   }
