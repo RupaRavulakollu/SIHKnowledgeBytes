@@ -10,6 +10,12 @@ import Avatar from '@material-ui/core/Avatar';
 import Hidden from '@material-ui/core/Hidden';
 import Button from "@material-ui/core/Button";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
 
 import Search from '@material-ui/icons/SearchRounded';
 import Add from '@material-ui/icons/Add';
@@ -20,11 +26,7 @@ import Snacky from './components/Snacky'
 import Article from './pages/Article'
 import ModeratorHome from "./pages/ModeratorHome";
 import Resources from "./pages/Resources";
-
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import Profile from "./pages/Profile";
-
 
 const styles = theme => ({
     root: {
@@ -40,7 +42,7 @@ const styles = theme => ({
     innerContainer: {
         display: 'flex',
         flexDirection: 'row',
-        padding: 8,
+        padding: '8px 0',
         width: '75%',
         margin: 'auto',
         [theme.breakpoints.down("md")]: {
@@ -52,6 +54,8 @@ const styles = theme => ({
     },
     titleContainer: {
         flexGrow: '1',
+        display: 'flex',
+        paddingLeft: 8,
     },
     title: {
         fontFamily: 'Merienda',
@@ -134,6 +138,7 @@ class NavigationPane extends Component {
             snackyErrorType: false,
             showSearchAndNew: !window.location.pathname.toLowerCase().includes('new-byte'),
             anchorEl: null,
+            openMenu: false,
         }
     }
 
@@ -150,8 +155,6 @@ class NavigationPane extends Component {
                 window.location = '/'
             })
     }
-
-    
 
     callSnacky = (message, isError) => {
         if (isError && !message) {
@@ -171,6 +174,7 @@ class NavigationPane extends Component {
 
         this.setState({ snackyOpen: false });
     };
+
     hideSearchAndNew = () => {
         this.setState({
             showSearchAndNew: false
@@ -184,17 +188,16 @@ class NavigationPane extends Component {
     }
 
     handleClick = event => {
-        this.setState({ anchorEl: event.currentTarget });
-      };
-    
-      handleClose = () => {
-        this.setState({ anchorEl: null });
-      };
+        this.setState({ anchorEl: event.currentTarget, openMenu: true });
+    };
+
+    handleClose = () => {
+        this.setState({ anchorEl: null, openMenu: false });
+    };
 
     render() {
         const { classes } = this.props;
-        const { showSearchAndNew } = this.state;
-        const { anchorEl } = this.state;
+        const { showSearchAndNew, anchorEl, openMenu } = this.state;
         const user = window.userDetails
 
         return (
@@ -235,22 +238,38 @@ class NavigationPane extends Component {
                                 title={'Profile'}
                                 src="https://ruparavulakollu.000webhostapp.com/images/avatar.jpg"
                                 className={classes.avatar}
-                                //onClick={this.logout}
-                                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                                aria-owns={openMenu ? 'menu-list-grow' : undefined}
                                 aria-haspopup="true"
                                 onClick={this.handleClick} />
 
-                            <Menu
-                                    id="simple-menu"
-                                    anchorEl={anchorEl}
-                                    open={Boolean(anchorEl)}
-                                    onClose={this.handleClose}
+                            <Popper
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                open={openMenu}
+                                transition
+                                disablePortal
+                                style={{ zIndex: 1000 }}
+                            >
+                                {({ TransitionProps, placement }) => (
+                                    <Grow
+                                        {...TransitionProps}
+                                        id="menu-list-grow"
+                                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
                                     >
-                                    <MenuItem component={Link} to='/profile'>Profile</MenuItem>
-                                    <MenuItem onClick={this.logout}>Logout</MenuItem>
-                            </Menu>
+                                        <Paper>
+                                            <ClickAwayListener onClickAway={this.handleClose}>
+                                                <MenuList>
+                                                    <MenuItem component={Link} to='/profile'>Profile</MenuItem>
+                                                    <MenuItem>My drafts</MenuItem>
+                                                    <MenuItem onClick={this.logout}>Logout</MenuItem>
+                                                </MenuList>
+                                            </ClickAwayListener>
+                                        </Paper>
+                                    </Grow>
+                                )}
+                            </Popper>
 
-                                
+
                         </div>
                     </div>
                     <main className={classes.content}>
