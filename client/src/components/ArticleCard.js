@@ -45,7 +45,7 @@ class ArticleCard extends Component {
                         {`${post.author.name} of ${post.author.dpsu}`}
                     </Typography>
                     <Typography variant="subtitle2" color="textSecondary">
-                        {new Date(post.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
+                        {new Date(parseInt(post.date)).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
                     </Typography>
                 </div>
             </Grid>
