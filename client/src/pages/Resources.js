@@ -12,7 +12,8 @@ const styles = theme => ({
         margin: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        height: '100%'
+        height: '100%',
+        padding: 8,
     },
     tabsRoot: {
         borderBottom: '1px solid #e8e8e8',

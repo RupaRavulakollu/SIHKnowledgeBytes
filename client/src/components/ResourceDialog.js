@@ -1,23 +1,12 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
-import ResourceDialog from './ResourceDialog';
+import Avatar from '@material-ui/core/Avatar'
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
 
 const styles = (theme) => ({
-    container: {
-        width: '30%',
-        [theme.breakpoints.down("md")]: {
-            width: "100%",
-            margin: 10,
-        }
-    },
-    card: {
-        margin: 8,
-    },
     countdown: {
         textAlign: "center",
         marginBottom: 16,
@@ -57,9 +46,27 @@ const styles = (theme) => ({
         width: 120,
         height: 120,
     },
+    dialogContent: {
+        padding: 0
+    },
+    dialogHeadContent: {
+        display: 'flex',
+        flexDirection: 'row',
+        padding: 20,
+        boxShadow: '0 4px 12px 0 rgba(0,0,0,.05)',
+        marginBottom: 20,
+        [theme.breakpoints.down('md')]: {
+            flexDirection: 'column',
+        },
+    },
+    dialogSubHeadContent: {
+        margin: "0 15px",
+        display: 'flex',
+        flexDirection: 'column',
+    },
 })
 
-class ResourceCard extends Component {
+class ResourceDialog extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -88,10 +95,10 @@ class ResourceCard extends Component {
                 }
                 else {
                     this.setState({
-                        days: days,
-                        hours: hours,
-                        minutes: minutes,
-                        seconds: seconds,
+                        days: days ? days : 0,
+                        hours: hours ? hours : 0,
+                        minutes: minutes ? hours : 0,
+                        seconds: seconds ? seconds : 0,
                     })
                 }
             }, 1000)
@@ -120,24 +127,26 @@ class ResourceCard extends Component {
     }
 
     render() {
-        var { resource, classes, self } = this.props
+        var { resource, classes, self, showDetails, hideDetails } = this.props
         return (
-            <div className={classes.container}>
-                <Card className={classes.card} onClick={this.showDetails}>
-                    <CardMedia
-                        image={resource.type === 'infra' ? 'http://icons-for-free.com/free-icons/png/512/1054957.png' : 'https://ruparavulakollu.000webhostapp.com/images/avatar.jpg'}
-                        component="img"
-                        alt="Resource Image"
-                        className={classes.media}
-                        height="140"
-                    />
-                    <CardContent style={{ textAlign: 'center' }}>
-                        <Typography gutterBottom variant="h5">
-                            {resource.name}
-                        </Typography>
-                        <Typography gutterBottom variant="overline">
-                            {`Auctioned by ${resource.dpsu.name}`}
-                        </Typography>
+            Object.keys(resource).length !== 0 &&
+            <Dialog fullWidth open={showDetails} onClose={hideDetails}>
+                <DialogContent className={classes.dialogContent}>
+                    <div className={classes.dialogHeadContent}>
+                        <Avatar src={resource.type === 'infra' ? 'http://icons-for-free.com/free-icons/png/512/1054957.png' : 'https://ruparavulakollu.000webhostapp.com/images/avatar.jpg'} className={classes.avatar} />
+                        <div className={classes.dialogSubHeadContent}>
+                            <Typography variant="h5">
+                                {resource.name}
+                            </Typography>
+                            <Typography gutterBottom variant="overline">
+                                {`Auctioned by ${resource.dpsu.name}`}
+                            </Typography>
+                            <Typography>
+                                {resource.description}
+                            </Typography>
+                        </div>
+                    </div>
+                    <div style={{ textAlign: 'center', margin: 20, }}>
                         <p style={{
                             fontWeight: 600,
                             color: "#9ca3a8",
@@ -152,17 +161,19 @@ class ResourceCard extends Component {
                             {this.getTimeComponent(this.props, 'Minutes', this.state.minutes, ':')}
                             {this.getTimeComponent(this.props, 'Seconds', this.state.seconds, '')}
                         </div>
-                    </CardContent>
-                    <div className={classes.bidLine}>
-                        <Typography style={{ color: 'white' }}>
-                            {"Highest bid by HSL - Rs. 15,000"}
-                        </Typography>
                     </div>
-                </Card>
-                <ResourceDialog self={self} showDetails={this.state.showDetails} hideDetails={this.hideDetails} resource={resource} />
-            </div>
+                    <div style={{ textAlign: 'center', padding: 10, margin: 20, }}>
+                        {"- Bidders come here -"}
+                    </div>
+                    {!self &&
+                        <div style={{ textAlign: 'center', padding: 10, margin: 20, }}>
+                            {"- Bidding options come here -"}
+                        </div>
+                    }
+                </DialogContent>
+            </Dialog>
         )
     }
 }
 
-export default withStyles(styles)(ResourceCard)
+export default withStyles(styles)(ResourceDialog)
