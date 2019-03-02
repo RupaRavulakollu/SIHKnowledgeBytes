@@ -19,6 +19,11 @@ import Snacky from './components/Snacky'
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Article from './pages/Article'
 
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Profile from "./pages/Profile";
+
+
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -123,6 +128,7 @@ class NavigationPane extends Component {
             snackyMessage: 'Just saying Hi!',
             snackyErrorType: false,
             showSearchAndNew: !window.location.pathname.toLowerCase().includes('new-byte'),
+            anchorEl: null,
         }
     }
 
@@ -139,6 +145,8 @@ class NavigationPane extends Component {
                 window.location = '/'
             })
     }
+
+    
 
     callSnacky = (message, isError) => {
         if (isError && !message) {
@@ -170,9 +178,18 @@ class NavigationPane extends Component {
         })
     }
 
+    handleClick = event => {
+        this.setState({ anchorEl: event.currentTarget });
+      };
+    
+      handleClose = () => {
+        this.setState({ anchorEl: null });
+      };
+
     render() {
         const { classes } = this.props;
-        const { showSearchAndNew } = this.state
+        const { showSearchAndNew } = this.state;
+        const { anchorEl } = this.state;
 
         return (
             <Router>
@@ -209,10 +226,25 @@ class NavigationPane extends Component {
                             }
 
                             <Avatar alt="User Actions"
-                                title={'Log out'}
+                                title={'Profile'}
                                 src="https://cdn-images-1.medium.com/fit/c/64/64/0*lapz1Su8bYyvSYOg"
                                 className={classes.avatar}
-                                onClick={this.logout} />
+                                //onClick={this.logout}
+                                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                                aria-haspopup="true"
+                                onClick={this.handleClick} />
+
+                            <Menu
+                                    id="simple-menu"
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={this.handleClose}
+                                    >
+                                    <MenuItem component={Link} to='/profile'>Profile</MenuItem>
+                                    <MenuItem onClick={this.logout}>Logout</MenuItem>
+                            </Menu>
+
+                                
                         </div>
                     </div>
                     <main className={classes.content}>
@@ -220,6 +252,7 @@ class NavigationPane extends Component {
                             <Route exact path="/" render={() => (<Redirect to="/trending" />)} />
                             <Route exact path="/home" render={() => (<Redirect to="/trending" />)} />
                             <Route path="/trending" render={(props) => (<Trending  {...props} showSearchAndNew={this.showSearchAndNew} />)} />
+                            <Route path="/profile" component={Profile} exact />
                             <Route path="/byte/:id" component={Article} exact />
                             <Route path="/new-byte" component={NewBytePreLoader} exact />
                             <Route path="/new-byte/:id" component={NewByte} />
