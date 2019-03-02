@@ -233,7 +233,7 @@ class NavigationPane extends Component {
 
                             <Avatar alt="User Actions"
                                 title={'Profile'}
-                                src="https://cdn-images-1.medium.com/fit/c/64/64/0*lapz1Su8bYyvSYOg"
+                                src="https://ruparavulakollu.000webhostapp.com/images/avatar.jpg"
                                 className={classes.avatar}
                                 //onClick={this.logout}
                                 aria-owns={anchorEl ? 'simple-menu' : undefined}
