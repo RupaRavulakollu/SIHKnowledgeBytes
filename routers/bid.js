@@ -62,6 +62,7 @@ bid.post('/:id', (req, res, next) => {
         }
         else {
             res.send(result.rows[0])
+            req.io.emit('new-bid', {bid: result.rows[0]})
         }
     })
 })
