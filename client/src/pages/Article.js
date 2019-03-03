@@ -320,86 +320,83 @@ class Article extends Component {
                         <Dot />
                         <Dot />
                     </div>
-                    {article.status === 'live' &&
-                        <div style={{ textAlign: 'center', margin: 10, }}>
-                            <Typography variant='h5'>Rate the article</Typography>
-                            <div className={classes.radioContainer}>
-                                <Radio
-                                    checked={this.state.myRating === 1}
-                                    onChange={this.handleChange}
-                                    style={{ color: '#FF0000' }}
-                                    value={1}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 2}
-                                    onChange={this.handleChange}
-                                    style={{ color: '#FF3400' }}
-                                    value={2}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 3}
-                                    onChange={this.handleChange}
-                                    style={{ color: '#FF6900' }}
-                                    value={3}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 4}
-                                    onChange={this.handleChange}
-                                    style={{ color: '#FF9E00' }}
-                                    value={4}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 5}
-                                    onChange={this.handleChange}
-                                    value={5}
-                                    style={{ color: '#FFD300' }}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 6}
-                                    onChange={this.handleChange}
-                                    value={6}
-                                    style={{ color: '#e8f000' }}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 7}
-                                    onChange={this.handleChange}
-                                    value={7}
-                                    style={{ color: '#eef602' }}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 8}
-                                    onChange={this.handleChange}
-                                    value={8}
-                                    style={{ color: '#8DFF00' }}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 9}
-                                    onChange={this.handleChange}
-                                    value={9}
-                                    style={{ color: '#58FF00' }}
-                                />
-                                <Radio
-                                    checked={this.state.myRating === 10}
-                                    onChange={this.handleChange}
-                                    value={10}
-                                    style={{ color: '#24FF00' }}
-                                />
-                            </div>
-                            {this.state.hasAlreadyRated ? <Typography gutterBottom variant='overline'>{`You have rated ${this.state.myRating}/10`}</Typography> :
-                                <div>
-                                    {this.state.myRating &&
-                                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10, }}>
-                                            <h3 style={{ margin: 10 }}>{this.state.myRating}/10</h3>
-                                            <Button onClick={this.rate} color='primary' variant='outlined'>
-                                                {"Rate"}
-                                            </Button>
-                                        </div>
-                                    }
-                                </div>
-                            }
+                    <div style={{ textAlign: 'center', margin: 10, }}>
+                        <Typography variant='h5'>Rate the article</Typography>
+                        <div className={classes.radioContainer}>
+                            <Radio
+                                checked={this.state.myRating === 1}
+                                onChange={this.handleChange}
+                                style={{ color: '#FF0000' }}
+                                value={1}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 2}
+                                onChange={this.handleChange}
+                                style={{ color: '#FF3400' }}
+                                value={2}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 3}
+                                onChange={this.handleChange}
+                                style={{ color: '#FF6900' }}
+                                value={3}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 4}
+                                onChange={this.handleChange}
+                                style={{ color: '#FF9E00' }}
+                                value={4}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 5}
+                                onChange={this.handleChange}
+                                value={5}
+                                style={{ color: '#FFD300' }}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 6}
+                                onChange={this.handleChange}
+                                value={6}
+                                style={{ color: '#e8f000' }}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 7}
+                                onChange={this.handleChange}
+                                value={7}
+                                style={{ color: '#eef602' }}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 8}
+                                onChange={this.handleChange}
+                                value={8}
+                                style={{ color: '#8DFF00' }}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 9}
+                                onChange={this.handleChange}
+                                value={9}
+                                style={{ color: '#58FF00' }}
+                            />
+                            <Radio
+                                checked={this.state.myRating === 10}
+                                onChange={this.handleChange}
+                                value={10}
+                                style={{ color: '#24FF00' }}
+                            />
                         </div>
-                    }
-
+                        {this.state.hasAlreadyRated ? <Typography gutterBottom variant='overline'>{`You have rated ${this.state.myRating}/10`}</Typography> :
+                            <div>
+                                {this.state.myRating &&
+                                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10, }}>
+                                        <h3 style={{ margin: 10 }}>{this.state.myRating}/10</h3>
+                                        <Button onClick={this.rate} color='primary' variant='outlined'>
+                                            {"Rate"}
+                                        </Button>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
                     <div className={classes.tags}>
                         {article.tags.map(tag => (
                             <Chip
@@ -417,38 +414,36 @@ class Article extends Component {
                         <Dot />
                         <Dot />
                     </div>
-                    {article.status === 'live' &&
-                        <div className={classes.commentSection}>
-                            <Typography>Comments</Typography>
-                            <div className={classes.commentContainer}>
-                                <TextField
-                                    multiline
-                                    id="outlined-comment-input"
-                                    placeholder="Write a comment"
-                                    className={classes.commentTF}
-                                    type="text"
-                                    name="comment"
-                                    margin="dense"
-                                    variant="outlined"
-                                    value={this.state.myComment}
-                                    onChange={this.handleCommentChange}
-                                />
-                                <Fab size='medium' color="primary" className={classes.fab} onClick={this.comment} disabled={this.state.isCommenting}>
-                                    <NearMe />
-                                </Fab>
-                            </div>
-                            {!this.state.isCommentsFetching &&
-                                this.state.comments.map(comment => (
-                                    <div key={comment.id} className={classes.commentSheet}>
-                                        <hr className={classes.hr} />
-                                        <Typography color='primary'>{`${comment.posted_by.name} (${comment.posted_by.dpsu.toUpperCase()})`}</Typography>
-                                        <Typography color='default' className={classes.commentDate}>{`${this.getDateTime(comment.posted_on)}`}</Typography>
-                                        <Typography className={classes.commentBox} variant='body1'>{comment.comment}</Typography>
-                                    </div>
-                                ))
-                            }
+                    <div className={classes.commentSection}>
+                        <Typography>Comments</Typography>
+                        <div className={classes.commentContainer}>
+                            <TextField
+                                multiline
+                                id="outlined-comment-input"
+                                placeholder="Write a comment"
+                                className={classes.commentTF}
+                                type="text"
+                                name="comment"
+                                margin="dense"
+                                variant="outlined"
+                                value={this.state.myComment}
+                                onChange={this.handleCommentChange}
+                            />
+                            <Fab size='medium' color="primary" className={classes.fab} onClick={this.comment} disabled={this.state.isCommenting}>
+                                <NearMe />
+                            </Fab>
                         </div>
-                    }
+                        {!this.state.isCommentsFetching &&
+                            this.state.comments.map(comment => (
+                                <div key={comment.id} className={classes.commentSheet}>
+                                    <hr className={classes.hr} />
+                                    <Typography color='primary'>{`${comment.posted_by.name} (${comment.posted_by.dpsu.toUpperCase()})`}</Typography>
+                                    <Typography color='default' className={classes.commentDate}>{`${this.getDateTime(comment.posted_on)}`}</Typography>
+                                    <Typography className={classes.commentBox} variant='body1'>{comment.comment}</Typography>
+                                </div>
+                            ))
+                        }
+                    </div>
                     {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
                     <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
 
