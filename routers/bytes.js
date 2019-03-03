@@ -19,12 +19,12 @@ const pool = new Pool({
 //-- Code begins here -----------------------------------------------------------------------------------------
 bytes.get('/', (req, res) => { //Get all articles
     var query = {
-        text: `select art.id, art.title, art.description, art.posted_on as date, art.tags,
+        text: `select art.id, art.title, art.description, art.posted_on as date,
         json_build_object('name', auth.name, 'dpsu', dpsu.name) as author
         from articles art
         inner join authors auth on auth.id = art.author
         inner join dpsu on dpsu.id = auth.dpsu
-        where live=true${req.query.dpsu ? ' and art.dpsu=(select id from dpsu where shortname=$1)' : ''}
+        where art.state='live'${req.query.dpsu ? ' and art.dpsu=(select id from dpsu where shortname=$1)' : ''}
         order by art.posted_on desc`,
     }
     if (req.query.dpsu) query.values = [req.query.dpsu]
@@ -142,14 +142,14 @@ bytes.get('/:id', (req, res, next) => { //Get content of one article
     else next()
 }, (req, res) => {
     var query = {
-        text: `select art.id, art.title, art.description, art.content, art.posted_on as date, art.tags,
+        text: `select art.id, art.title, art.description, art.content, art.posted_on as date,
         json_build_object('name', auth.name, 'dpsu', dpsu.name) as author,
         r.rating
         from articles art
         inner join authors auth on auth.id = art.author
         inner join dpsu dpsu on dpsu.id = auth.dpsu
         left join ratings r on r.article=$1 and r.rated_by=$2
-        where art.id=$1 and live=true`,
+        where art.id=$1 and art.state='live'`,
         values: [req.params.id, req.session.user.id],
     }
     pool.query(query, (err, result) => {
