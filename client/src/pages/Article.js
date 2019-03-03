@@ -296,13 +296,13 @@ class Article extends Component {
                     <div className={classes.flexBox}>
                         <div className={classes.info}>
                             <Typography>
-                                {article.author ? '' : article.author.name}
+                                {article.author.name}
                             </Typography>
                             <Typography>
                                 {this.getDate(article.date)}
                             </Typography>
                         </div>
-                        {this.state.rating && this.state.rating.count && article.status === 'live' &&
+                        {this.state.rating && this.state.rating.count &&
                             <div className={classes.flexBox} >
                                 <StarRate style={{ color: '#FFBF00', margin: "0 10px 0 15px" }} />
                                 <Typography variant='h6'>
