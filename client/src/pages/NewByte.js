@@ -6,6 +6,12 @@ import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import InputBase from '@material-ui/core/InputBase'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@material-ui/core/DialogActions";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 import '../css/Editor.css'
 
 import Save from '@material-ui/icons/Save'
@@ -61,6 +67,8 @@ class NewByte extends Component {
             snackyMessage: 'Just saying Hi!',
             snackyErrorType: false,
             savedToServer: false,
+            description: '',
+            descriptionDialog: false,
         }
     }
 
@@ -144,14 +152,16 @@ class NewByte extends Component {
             this.callSnacky("Please save before publishing", true)
         }
         else {
-            axios.post('/api/drafts/publish', { id: this.state.id })
+            this.setState({isPublishing: true})
+            axios.post('/api/drafts/publish', { id: this.state.id, description: this.state.description })
                 .then(res => {
-                    window.location = `/byte/${res.data.id}`
+                    window.location = `/profile`
                 })
                 .catch(err => {
                     console.log("Error publishing draft: ", err)
                     this.callSnacky(err.response.data.error, true)
                 })
+                .finally(() => this.setState({isPublishing: false}))
         }
     }
 
@@ -179,6 +189,24 @@ class NewByte extends Component {
 
         this.setState({ snackyOpen: false });
     };
+
+    handleDescriptionChange = (event) => {
+        this.setState({
+            description: event.target.value,
+        })
+    }
+
+    openDescriptionDialog = () => {
+        this.setState({
+            descriptionDialog: true,
+        })
+    }
+
+    closeDescriptionDialog = () => {
+        this.setState({
+            descriptionDialog: false,
+        })
+    }
 
     render() {
         const { classes } = this.props
@@ -229,7 +257,7 @@ class NewByte extends Component {
                                     <Save />
                                 </Fab>
                                 :
-                                <Fab onClick={this.publishDraft} color='primary' style={{ margin: "8px 0", }}>
+                                <Fab onClick={this.openDescriptionDialog} disabled={this.state.isPublishing} color='primary' style={{ margin: "8px 0", }}>
                                     <Publish />
                                 </Fab>
                             }
@@ -240,6 +268,26 @@ class NewByte extends Component {
                     :
                     <LinearProgress color='primary' />
                 }
+                <Dialog open={this.state.descriptionDialog} fullWidth>
+                    <DialogTitle>{"Provide a description"}</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                                multiline
+                                fullWidth
+                                rows={4}
+                                placeholder="Provide a description for your article for the readers to get a glimpse."
+                                type="text"
+                                margin="dense"
+                                variant="outlined"
+                                value={this.state.description}
+                                onChange={this.handleDescriptionChange}
+                            />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.closeDescriptionDialog}>{"Cancel"}</Button>
+                        <Button color='primary' onClick={this.publishDraft}>{"Publish"}</Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         )
     }

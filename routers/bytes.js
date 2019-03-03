@@ -39,6 +39,28 @@ bytes.get('/', (req, res) => { //Get all articles
     })
 })
 
+bytes.get('/mine', (req, res) => {
+    var query = {
+        text: `select art.id, art.title, art.description, art.posted_on as date, art.state,
+        json_build_object('name', auth.name, 'dpsu', dpsu.name) as author
+        from articles art
+        inner join authors auth on auth.id = art.author
+        inner join dpsu on dpsu.id = auth.dpsu
+        where art.author=$1
+        order by art.posted_on desc`,
+        values: [req.session.user.id],
+    }
+    pool.query(query, (err, result) => {
+        if (err) {
+            console.log("Error getting my bytes: ", err)
+            res.status(500).send({ error: "Couldn't get your bytes" })
+        }
+        else {
+            res.send(result.rows)
+        }
+    })
+})
+
 
 // Comments
 bytes.get('/:id/comments', (req, res) => { //Get all comments

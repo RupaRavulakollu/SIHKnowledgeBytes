@@ -312,17 +312,6 @@ class Article extends Component {
                         <Dot />
                         <Dot />
                     </div>
-                    <div className={classes.tags}>
-                        {article.tags.map(tag => (
-                            <Chip
-                                key={tag}
-                                label={tag}
-                                variant='outlined'
-                                clickable
-                                className={classes.tag}
-                            />
-                        ))}
-                    </div>
 
                     <div style={{ textAlign: 'center', margin: 10, }}>
                         <Typography variant='h5'>Rate the article</Typography>

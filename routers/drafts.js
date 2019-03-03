@@ -164,7 +164,7 @@ drafts.delete('/:id', (req, res, next) => { //Discard a draft
 })
 
 drafts.post('/publish', (req, res, next) => { //Publish the draft as article
-    if (!req.body.id)
+    if (!req.body.id || !req.body.description)
         res.status(400).send({ error: "The request body is incomplete" })
     else next()
 }, (req, res, next) => { //Check authenticity
@@ -184,13 +184,13 @@ drafts.post('/publish', (req, res, next) => { //Publish the draft as article
 }, (req, res) => { //Publish
     var query = {
         text: `with article as (
-                    insert into articles (id, title, content, author, dpsu)
-                    select id, title, content, author, dpsu from drafts
+                    insert into articles (id, title, content, author, dpsu, description)
+                    select id, title, content, author, dpsu, $2 as description from drafts
                     where id = $1
                     returning id
                 ), draft as (delete from drafts where id=(select id from article))
                 select id from article;`,
-        values: [req.body.id],
+        values: [req.body.id, req.body.description],
     }
     pool.query(query, (err, result) => {
         if (err) {

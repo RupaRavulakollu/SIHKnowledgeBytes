@@ -25,14 +25,22 @@ const styles = () => ({
     }
 });
 
+function getStyle(state) {
+    if(state === 'live') return {color: '#02b102'}
+    if(state === 'pending') return {color: '#ff8400'}
+    else if(state === 'rejected') return {color: 'red'}
+    else return {}
+}
+
 class ArticleCard extends Component {
+
     render() {
-        const { post, classes } = this.props
+        const { post, classes, mine } = this.props
         return (
             <Grid item key={post.id} xs={12} md={6}
                 className={classes.container}
                 component={Link}
-                to={{pathname: `/byte/${post.id}`}}
+                to={{ pathname: `/byte/${post.id}` }}
             >
                 <Typography variant="h5" className={classes.title}>
                     {post.title}
@@ -41,9 +49,15 @@ class ArticleCard extends Component {
                     {post.description}
                 </Typography>
                 <div>
-                    <Typography variant="overline" className={classes.author}>
-                        {`${post.author.name} of ${post.author.dpsu}`}
-                    </Typography>
+                    {!mine ?
+                        <Typography variant="overline" className={classes.author}>
+                            {`${post.author.name} of ${post.author.dpsu}`}
+                        </Typography>
+                        :
+                        <Typography variant="overline" className={classes.author} style={getStyle(post.state)}>
+                            {post.state}
+                        </Typography>
+                    }
                     <Typography variant="subtitle2" color="textSecondary">
                         {new Date(parseInt(post.date)).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
                     </Typography>

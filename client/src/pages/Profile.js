@@ -50,7 +50,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/bytes')
+    axios.get('/api/bytes/mine')
       .then(res => {
         this.setState({
           featuredPosts: res.data,
@@ -95,7 +95,7 @@ class App extends Component {
         <Divider className={classes.divider} />
         <Grid container direction='column' spacing={24} className={classes.gridContainer}>
           {featuredPosts.map((post, i) => (
-            <ArticleCard key={i} post={post} />
+            <ArticleCard key={i} post={post} mine/>
           ))}
         </Grid>
       </div>
