@@ -47,7 +47,6 @@ class BrowseResource extends Component {
     componentDidMount() {
         axios.get('/api/resources')
             .then(res => {
-                console.log(res.data)
                 this.setState({
                     resources: res.data,
                 })
@@ -116,7 +115,7 @@ class BrowseResource extends Component {
                     }
                     <div className={classes.container}>
                         {this.state.resources.length === 0 &&
-                            <Typography variant="h5" style={{ margin: '10px auto', }}>{"No Resources auctioned yet"}</Typography>
+                            <Typography variant="h5" style={{ margin: '10px auto', textAlign: 'center', }}>{"No Resources auctioned yet"}</Typography>
                         }
                         <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
                     </div>

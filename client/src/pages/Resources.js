@@ -69,6 +69,7 @@ class Resources extends Component {
     };
 
     componentDidMount() {
+        this.props.hideSearchAndNew()
         this.setState({
             value: window.location.pathname.includes('browse') ? 1 : 0,
         })

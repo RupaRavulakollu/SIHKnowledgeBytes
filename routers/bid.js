@@ -38,8 +38,8 @@ bid.post('/:id', (req, res, next) => {
             res.status(500).send({error: "Couldn't validate your bid"})
         }
         else {
-            if(req.params.price > result.rows[0].max) next()
-            else res.send(403).send({error: "You can't bid lower than the maximum bid/base price"})
+            if(parseInt(req.body.price) > parseInt(result.rows[0].max)) next()
+            else res.status(403).send({error: "You can't bid lower than the maximum bid/base price"})
         }
     })
 }, (req, res) => {
@@ -62,7 +62,7 @@ bid.post('/:id', (req, res, next) => {
         }
         else {
             res.send(result.rows[0])
-            req.io.emit('new-bid', {bid: result.rows[0]})
+            req.io.in(result.rows[0].resource).emit('new-bid', {bid: result.rows[0]})
         }
     })
 })
@@ -83,8 +83,7 @@ bid.get('/:id', (req, res) => {
             res.status(500).send({error: "Couldn't get the bids"})
         }
         else {
-            if(result.rowCount === 0) res.status(404).send({error: 'The resource is not found'})
-            else res.send(result.rows)
+            res.send(result.rows)
         }
     })
 })

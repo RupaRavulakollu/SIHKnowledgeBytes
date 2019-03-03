@@ -204,11 +204,11 @@ class Dashboard extends Component {
                             })}
                         </div>
                     }
-                    {view === 'table' &&
+                    {this.state.resources.length !== 0 && view === 'table' &&
                         <ResourceTable resources={this.state.resources} self />
                     }
                     {this.state.resources.length === 0 &&
-                        <Typography variant="h5" style={{ margin: '10px auto', }}>{"No Resources auctioned yet"}</Typography>
+                        <Typography variant="h5" style={{ margin: '10px auto', textAlign: 'center', }}>{"No Resources auctioned yet"}</Typography>
                     }
                     {/* FAB to add new resource in a DPSU */}
                     <Fab size='medium' color='primary' className={classes.newResButton} onClick={this.openNewResourceDialog} >

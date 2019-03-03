@@ -81,7 +81,7 @@ class ResourceTable extends Component {
                             <Hidden smDown>
                                 <CustomTableCell>Resource Type</CustomTableCell>
                                 <CustomTableCell>Closes On</CustomTableCell>
-                                <CustomTableCell>Bid</CustomTableCell>
+                                <CustomTableCell>Highest Bid</CustomTableCell>
                             </Hidden>
                         </TableRow>
                     </TableHead>
@@ -97,7 +97,7 @@ class ResourceTable extends Component {
                                     <CustomTableCell>{resource.dpsu.name}</CustomTableCell>
                                     <CustomTableCell>{resource.type === 'infra' ? 'Infrastructure' : 'Human Resource'}</CustomTableCell>
                                     <CustomTableCell>{this.getDate(parseInt(resource.deadline))}</CustomTableCell>
-                                    <CustomTableCell>{'Rs. 15,000'}</CustomTableCell>
+                                    <CustomTableCell>{resource.maxbid}</CustomTableCell>
                                 </Hidden>
                                 <Hidden mdUp>
                                     <CustomTableCell>{resource.dpsu.shortname.toUpperCase()}</CustomTableCell>
@@ -106,7 +106,9 @@ class ResourceTable extends Component {
                         ))}
                     </TableBody>
                 </Table>
-                <ResourceDialog self={self} showDetails={this.state.showDetails} hideDetails={this.hideDetails} resource={this.state.selectedResource} />
+                {Object.keys(this.state.selectedResource).length !== 0 &&
+                    <ResourceDialog self={self} showDetails={this.state.showDetails} hideDetails={this.hideDetails} resource={this.state.selectedResource} />
+                }
             </Paper>
         );
     }

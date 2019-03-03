@@ -275,7 +275,6 @@ class Article extends Component {
     render() {
         const { classes } = this.props
         const { article, isFetching } = this.state
-        const user = window.userDetails
 
         return (
             isFetching ? <LinearProgress /> :

@@ -153,11 +153,13 @@ class ResourceCard extends Component {
                             {this.getTimeComponent(this.props, 'Seconds', this.state.seconds, '')}
                         </div>
                     </CardContent>
-                    <div className={classes.bidLine}>
-                        <Typography style={{ color: 'white' }}>
-                            {"Highest bid by HSL - Rs. 15,000"}
-                        </Typography>
-                    </div>
+                    {resource.maxbid &&
+                        <div className={classes.bidLine}>
+                            <Typography style={{ color: 'white' }}>
+                                {`Highest bid is Rs. ${resource.maxbid}`}
+                            </Typography>
+                        </div>
+                    }
                 </Card>
                 <ResourceDialog self={self} showDetails={this.state.showDetails} hideDetails={this.hideDetails} resource={resource} />
             </div>

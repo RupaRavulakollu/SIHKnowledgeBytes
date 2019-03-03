@@ -136,7 +136,7 @@ class NavigationPane extends Component {
             snackyOpen: false,
             snackyMessage: 'Just saying Hi!',
             snackyErrorType: false,
-            showSearchAndNew: !window.location.pathname.toLowerCase().includes('new-byte'),
+            showSearchAndNew: !window.location.pathname.toLowerCase().includes('new-byte') && !window.location.pathname.toLowerCase().includes('resource'),
             anchorEl: null,
             openMenu: false,
         }
@@ -144,7 +144,7 @@ class NavigationPane extends Component {
 
     componentDidMount() {
         this.setState({
-            showSearchAndNew: !window.location.pathname.toLowerCase().includes('new-byte')
+            showSearchAndNew: !window.location.pathname.toLowerCase().includes('new-byte') && !window.location.pathname.toLowerCase().includes('resource')
         })
     }
 
@@ -248,6 +248,7 @@ class NavigationPane extends Component {
                                 open={openMenu}
                                 transition
                                 disablePortal
+                                onClick={this.handleClose}
                                 style={{ zIndex: 1000 }}
                             >
                                 {({ TransitionProps, placement }) => (
@@ -260,6 +261,12 @@ class NavigationPane extends Component {
                                             <ClickAwayListener onClickAway={this.handleClose}>
                                                 <MenuList>
                                                     <MenuItem component={Link} to='/profile'>Profile</MenuItem>
+                                                    {window.userDetails.moderator &&
+                                                        <MenuItem component={Link} to='/trending'>Bytes</MenuItem>
+                                                    }
+                                                    {window.userDetails.moderator &&
+                                                        <MenuItem component={Link} to='/resources'>Resources</MenuItem>
+                                                    }
                                                     <MenuItem>My drafts</MenuItem>
                                                     <MenuItem onClick={this.logout}>Logout</MenuItem>
                                                 </MenuList>
@@ -288,7 +295,7 @@ class NavigationPane extends Component {
                             }
                             {
                                 user.moderator &&
-                                <Route path='/resources' component={Resources} />
+                                <Route path='/resources' render={(props) => (<Resources  {...props} hideSearchAndNew={this.hideSearchAndNew} />)} />
                             }
                             <Route path="/trending" render={(props) => (<Trending  {...props} showSearchAndNew={this.showSearchAndNew} />)} />
                             <Route path="/profile" component={Profile} exact />
