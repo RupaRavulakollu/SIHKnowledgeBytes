@@ -1,0 +1,53 @@
+.content {
+    margin: auto;
+}
+
+.content figure{
+    clear: both;
+    text-align: center;
+    margin: 1em 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.content img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.content figcaption {
+    color: #333;
+    background-color: #f7f7f7;
+    padding: .6em;
+    font-size: .75em;
+    outline-offset: -1px;
+}
+
+.content blockquote {
+    overflow: hidden;
+    padding-right: 1.5em;
+    padding-left: 1.5em;
+    margin-left: 0;
+    font-style: italic;
+    border-left: 5px solid #ccc;
+}
+
+.content table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px double #b3b3b3;
+}
+.content table td{
+    min-width: 2em;
+    padding: .4em;
+    border-color: #d9d9d9;
+}
+
+.content a {
+    color: #320b86;
+}
+
+.content p {
+    word-break: break-all;
+}

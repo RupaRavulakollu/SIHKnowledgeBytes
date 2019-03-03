@@ -54,7 +54,15 @@ class Profile extends Component {
 
     deleteDraft = (id) => {
         axios.delete(`/api/drafts/${id}`)
-            .then(_ => console.log("Deleted draft"))
+            .then(_ => {
+                console.log("Deleted draft")
+                var drafts = this.state.drafts
+                var index = drafts.findIndex(d => d.id === id)
+                if(index !== -1) drafts.splice(index, 1)
+                this.setState({
+                    drafts: drafts,
+                })
+            })
             .catch(err => console.log("Error deleting draft: ", err))
     }
 
@@ -93,7 +101,7 @@ class Profile extends Component {
                     {drafts.map((draft, i) => (
                         <ListItem key={i} className={classes.listItemContainer}>
                             <ListItemText>
-                                <Typography variant='h5'>{draft.title}</Typography>
+                                <Typography variant='h5'>{draft.title ? draft.title : 'Untitled'}</Typography>
                             </ListItemText>
                             <div>
                                 <IconButton component={Link} to={`/new-byte/${draft.id}`} className={classes.icon} style={{ color: '#02b102' }}>

@@ -86,6 +86,19 @@ class BrowseResource extends Component {
         })
     }
 
+    closeResource = (resource) => {
+        var { resources } = this.state
+        var index = resources.findIndex(r => {
+            return r.id === resource.id
+        })
+        if (index !== -1) {
+            resources.splice(index, 1)
+            this.setState({
+                resources: resources
+            })
+        }
+    }
+
     render() {
         const { classes } = this.props
         const { view } = this.state
@@ -106,7 +119,7 @@ class BrowseResource extends Component {
                     {view === 'grid' &&
                         <div className={classes.container}>
                             {this.state.resources.map(resource => {
-                                return <ResourceCard resource={resource} key={resource.id} self />
+                                return <ResourceCard resource={resource} key={resource.id} self closeResource={this.closeResource} />
                             })}
                         </div>
                     }

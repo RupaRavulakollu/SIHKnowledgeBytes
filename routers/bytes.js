@@ -34,7 +34,8 @@ bytes.get('/', (req, res) => { //Get all articles
             res.status(500).send({ error: "Couldn't get the bytes" })
         }
         else {
-            res.send(result.rows)
+            if (result.rowCount > 0) res.send(result.rows)
+            else res.status(204).send([])
         }
     })
 })
@@ -56,7 +57,13 @@ bytes.get('/mine', (req, res) => {
             res.status(500).send({ error: "Couldn't get your bytes" })
         }
         else {
-            res.send(result.rows)
+            console.log(result.rows)
+            if (result.rowCount > 0) {
+                res.send(result.rows)
+            }
+            else {
+                res.status(204).send(result.rows)
+            }
         }
     })
 })
@@ -160,12 +167,12 @@ bytes.get('/:id/rating', (req, res) => { //Get article rating
     })
 })
 
-bytes.get('/:id', (req, res, next) => { //Get content of one article
+bytes.get('/:id', (req, res, next) => { //Get content of one live article
     if (!req.params.id) res.status(400).send({ error: "The request parameter is missing" })
     else next()
 }, (req, res) => {
     var query = {
-        text: `select art.id, art.title, art.description, art.content, art.posted_on as date,
+        text: `select art.id, art.title, art.description, art.content, art.posted_on as date, art.tags,
         json_build_object('name', auth.name, 'dpsu', dpsu.name) as author,
         r.rating
         from articles art

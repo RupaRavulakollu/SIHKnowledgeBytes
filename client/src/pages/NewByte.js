@@ -15,7 +15,7 @@ import Button from "@material-ui/core/Button";
 import '../css/Editor.css'
 
 import Save from '@material-ui/icons/Save'
-import Delete from '@material-ui/icons/Delete'
+import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import Publish from '@material-ui/icons/Publish'
 
 import axios from 'axios'
@@ -38,7 +38,7 @@ const styles = theme => ({
         bottom: 20,
         display: "flex",
         flexDirection: "column",
-        position: "absolute",
+        position: "fixed",
     },
     fabMoveUp: {
         transform: 'translate3d(0, -70px, 0)',
@@ -60,7 +60,7 @@ class NewByte extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            id: null,
+            id: '',
             title: '',
             initialContent: '<p>&nbsp;</p>',
             snackyOpen: false,
@@ -68,6 +68,7 @@ class NewByte extends Component {
             snackyErrorType: false,
             savedToServer: false,
             description: '',
+            tags: '',
             descriptionDialog: false,
         }
     }
@@ -152,8 +153,10 @@ class NewByte extends Component {
             this.callSnacky("Please save before publishing", true)
         }
         else {
-            this.setState({isPublishing: true})
-            axios.post('/api/drafts/publish', { id: this.state.id, description: this.state.description })
+            var rtags = this.state.tags
+            var tags = rtags.replace(/\s/g, '').split(',')
+            this.setState({ isPublishing: true })
+            axios.post('/api/drafts/publish', { id: this.state.id, description: this.state.description, tags: tags })
                 .then(res => {
                     window.location = `/profile`
                 })
@@ -161,14 +164,8 @@ class NewByte extends Component {
                     console.log("Error publishing draft: ", err)
                     this.callSnacky(err.response.data.error, true)
                 })
-                .finally(() => this.setState({isPublishing: false}))
+                .finally(() => this.setState({ isPublishing: false }))
         }
-    }
-
-    deleteDraft = () => {
-        axios.delete(`/api/drafts/${this.state.id}`)
-            .then(_ => console.log("Deleted draft"))
-            .catch(err => console.log("Error deleting draft: ", err))
     }
 
     callSnacky = (message, isError) => {
@@ -190,9 +187,9 @@ class NewByte extends Component {
         this.setState({ snackyOpen: false });
     };
 
-    handleDescriptionChange = (event) => {
+    handleChange = name => (event) => {
         this.setState({
-            description: event.target.value,
+            [name]: event.target.value,
         })
     }
 
@@ -245,12 +242,11 @@ class NewByte extends Component {
                         />
                         <div className={fabClassName}>
                             <Fab onClick={() => {
-                                this.deleteDraft()
-                                window.location = '/'
+                                window.location = '/drafts'
                             }}
                                 style={{ margin: "8px 0", }}
                             >
-                                <Delete />
+                                <ChevronLeft />
                             </Fab>
                             {!this.state.savedToServer ?
                                 <Fab onClick={this.saveDraft} color='primary' style={{ margin: "8px 0", }}>
@@ -270,19 +266,34 @@ class NewByte extends Component {
                 }
                 <Dialog open={this.state.descriptionDialog} fullWidth>
                     <DialogTitle>{"Provide a description"}</DialogTitle>
+                    <DialogContent style={{ paddingBottom: 5, }}>
+                        <TextField
+                            multiline
+                            fullWidth
+                            rows={4}
+                            placeholder="Provide a description for your article for the readers to get a glimpse."
+                            type="text"
+                            margin="dense"
+                            variant="outlined"
+                            value={this.state.description}
+                            onChange={this.handleChange('description')}
+                        />
+                    </DialogContent>
+                    <DialogTitle>{"Attach Tags"}</DialogTitle>
                     <DialogContent>
                         <TextField
-                                multiline
-                                fullWidth
-                                rows={4}
-                                placeholder="Provide a description for your article for the readers to get a glimpse."
-                                type="text"
-                                margin="dense"
-                                variant="outlined"
-                                value={this.state.description}
-                                onChange={this.handleDescriptionChange}
-                            />
+                            multiline
+                            fullWidth
+                            rows={4}
+                            placeholder="Provide a comma-separated list of tags for the readers to get a glimpse."
+                            type="text"
+                            margin="dense"
+                            variant="outlined"
+                            value={this.state.tags}
+                            onChange={this.handleChange('tags')}
+                        />
                     </DialogContent>
+
                     <DialogActions>
                         <Button onClick={this.closeDescriptionDialog}>{"Cancel"}</Button>
                         <Button color='primary' onClick={this.publishDraft}>{"Publish"}</Button>

@@ -63,6 +63,7 @@ class Dashboard extends Component {
         super(props)
         this.state = {
             resources: [],
+            closedResource: [],
             loading: true,
             snackyOpen: false,
             snackyMessage: 'Just saying Hi!',
@@ -84,6 +85,20 @@ class Dashboard extends Component {
             .then(res => {
                 this.setState({
                     resources: res.data,
+                })
+            })
+            .catch(err => {
+                this.callSnacky(err.response.data.error, true)
+            })
+            .finally(() => {
+                this.setState({
+                    loading: false,
+                })
+            })
+        axios.get('/api/resources/closed')
+            .then(res => {
+                this.setState({
+                    closedResource: res.data,
                 })
             })
             .catch(err => {
@@ -147,6 +162,22 @@ class Dashboard extends Component {
         this.setState({ deadline: date.getTime() });
     };
 
+    closeResource = (resource) => {
+        var { resources } = this.state
+        var index = resources.findIndex(r => {
+            return r.id === resource.id
+        })
+        if (index !== -1) {
+            resources.splice(index, 1)
+            this.setState({
+                resources: resources
+            })
+        }
+        this.setState((prev) => ({
+            closedResource: [resource, ...prev.closedResource]
+        }))
+    }
+
     addNewResource = () => {
         this.setState({
             addingNew: true
@@ -200,7 +231,7 @@ class Dashboard extends Component {
                     {view === 'grid' &&
                         <div className={classes.container}>
                             {this.state.resources.map(resource => {
-                                return <ResourceCard resource={resource} key={resource.id} self />
+                                return <ResourceCard resource={resource} key={resource.id} self closeResource={this.closeResource} />
                             })}
                         </div>
                     }

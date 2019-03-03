@@ -84,7 +84,7 @@ class ResourceCard extends Component {
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
                 if (seconds < 0) {
                     clearInterval(countdown)
-                    // this.props.closeResource(this.props.resource)
+                    this.props.closeResource(this.props.resource)
                 }
                 else {
                     this.setState({

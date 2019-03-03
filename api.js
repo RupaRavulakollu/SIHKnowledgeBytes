@@ -119,6 +119,31 @@ api.post('/logout', (req, res) => { //- Log out
     res.status(200).send({ message: 'You\'ve been successfully logged out' })
 })
 
+api.post('/search', (req, res, next) => {
+    if(!req.body.query) res.status(400).send({error: 'No search query provided'})
+    else next()
+}, (req, res) => {
+    var searchString = req.body.query.split(' ').join(' | ')
+    var query = {
+        text: `select art.id, art.title, art.description, art.posted_on as date,
+        json_build_object('name', auth.name, 'dpsu', dpsu.name) as author
+        from articles art
+        inner join authors auth on auth.id = art.author
+        inner join dpsu on dpsu.id = auth.dpsu
+        WHERE art.state='live' and to_tsvector(title || ' ' || content || ' ' || description) @@ to_tsquery($1)`,
+        values: [searchString],
+    }
+    pool.query(query, (err, result) => {
+        if(err) {
+            console.log("Error in searching: ", err)
+            res.status(500).send({error: "Couldn't complete your search"})
+        }
+        else {
+            res.send(result.rows)
+        }
+    })
+})
+
 
 api.use('/drafts', require('./routers/drafts'))
 api.use('/bytes', require('./routers/bytes'))

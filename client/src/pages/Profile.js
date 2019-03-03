@@ -4,6 +4,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid'
 import axios from 'axios';
+
+import Snacky from '../components/Snacky'
 import ArticleCard from '../components/ArticleCard'
 
 
@@ -63,16 +65,38 @@ class Profile extends Component {
   componentDidMount() {
     axios.get('/api/bytes/mine')
       .then(res => {
+        console.log(res.data)
         this.setState({
           featuredPosts: res.data,
         })
       })
       .catch(err => {
         console.log("Error getting all bytes: ", err)
-        this.callSnacky(err.response.data.error, true)
+        if (err.response)
+          this.callSnacky(err.response.data.error, true)
+        else
+          this.callSnacky('', true)
       })
-
   }
+
+  callSnacky = (message, isError) => {
+    if (isError && !message) {
+      message = "Something's Wrong"
+    }
+    this.setState({
+      snackyMessage: message,
+      snackyOpen: true,
+      snackyErrorType: isError,
+    })
+  }
+
+  handleSnackyClose = (_event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ snackyOpen: false });
+  };
 
 
 
@@ -84,7 +108,6 @@ class Profile extends Component {
 
 
     return (
-
       <div>
         <div className={classes.gridContainer}>
           <Avatar alt="User Actions"
@@ -103,6 +126,9 @@ class Profile extends Component {
             <ArticleCard key={i} post={post} mine />
           ))}
         </Grid>
+
+        {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
+        <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
       </div>
     );
   }

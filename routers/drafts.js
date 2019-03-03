@@ -184,13 +184,13 @@ drafts.post('/publish', (req, res, next) => { //Publish the draft as article
 }, (req, res) => { //Publish
     var query = {
         text: `with article as (
-                    insert into articles (id, title, content, author, dpsu, description)
-                    select id, title, content, author, dpsu, $2 as description from drafts
+                    insert into articles (id, title, content, author, dpsu, description, tags)
+                    select id, title, content, author, dpsu, $2 as description, $3 as tags from drafts
                     where id = $1
                     returning id
                 ), draft as (delete from drafts where id=(select id from article))
                 select id from article;`,
-        values: [req.body.id, req.body.description],
+        values: [req.body.id, req.body.description, req.body.tags],
     }
     pool.query(query, (err, result) => {
         if (err) {

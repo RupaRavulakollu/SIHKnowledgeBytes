@@ -9,6 +9,7 @@ import Dot from '../components/Dot';
 import Snacky from '../components/Snacky'
 import { CircularProgress } from '@material-ui/core';
 
+import '../css/Article.css'
 
 const styles = theme => ({
     container: {
@@ -151,7 +152,7 @@ class ModerationArticle extends Component {
                             </Typography>
                         </div>
                     </div>
-                    <div className={classes.content} dangerouslySetInnerHTML={{ __html: `${article.content}` }} />
+                    <div className='content' dangerouslySetInnerHTML={{ __html: `${article.content}` }} />
                     <div className={classes.endSection}>
                         <Dot />
                         <Dot />

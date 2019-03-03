@@ -31,6 +31,8 @@ import ModerationArticle from "./pages/ModerationArticle";
 import Resources from "./pages/Resources";
 import Profile from "./pages/Profile";
 import Drafts from './pages/Drafts';
+import SearchPage from "./pages/Search";
+import Page404 from "./pages/Page404";
 
 const styles = theme => ({
     root: {
@@ -233,7 +235,12 @@ class NavigationPane extends Component {
                                         <Search />
                                     </IconButton>
                                     <Hidden mdDown>
-                                        <InputBase className={classes.input} placeholder="Search" />
+                                        <InputBase className={classes.input} placeholder="Search" onKeyPress={(event) => {
+                                            if (event.key === 'Enter') {
+                                                if (event.target.value !== '')
+                                                    window.location = `/search?q=${event.target.value.split(' ').join('+')}`
+                                            }
+                                        }} />
                                     </Hidden>
                                 </div>
                             }
@@ -324,6 +331,9 @@ class NavigationPane extends Component {
                             <Route path="/byte/:id" component={Article} exact />
                             <Route path="/new-byte" component={NewBytePreLoader} exact />
                             <Route path="/new-byte/:id" component={NewByte} />
+                            <Route path="/search" component={SearchPage} />
+                            <Route path="/404" component={Page404} />
+                            <Route component={Page404} />
                         </Switch>
                     </main>
                     {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}

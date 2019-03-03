@@ -8,13 +8,15 @@ import Radio from '@material-ui/core/Radio';
 import Dot from '../components/Dot';
 import green from '@material-ui/core/colors/green';
 import TextField from '@material-ui/core/TextField';
+import Chip from '@material-ui/core/Chip';
 import Fab from '@material-ui/core/Fab';
 import Button from '@material-ui/core/Button';
+
 import NearMe from '@material-ui/icons/NearMe';
 import StarRate from '@material-ui/icons/StarRate';
 
 import Snacky from '../components/Snacky'
-
+import '../css/Article.css'
 
 const styles = theme => ({
     container: {
@@ -25,7 +27,8 @@ const styles = theme => ({
         display: 'flex',
         flexDirection: 'column',
         [theme.breakpoints.down('md')]: {
-            width: '100%'
+            width: '90%',
+            padding: 4
         },
     },
     title: {
@@ -152,6 +155,11 @@ class Article extends Component {
             })
             .catch(err => {
                 console.log(err)
+                if (err.response) {
+                    if (err.response.status === 404) {
+                        window.location = '/404'
+                    }
+                }
                 this.callSnacky(err.response.data.error, true)
             })
             .finally(() => {
@@ -191,8 +199,8 @@ class Article extends Component {
     }
 
     getDateTime = (epoch) => {
-        return new Date(parseInt(epoch)).toLocaleString('en-IN', 
-        { day: '2-digit', month: 'short', year: 'numeric', hour12: true, hour: '2-digit', minute: '2-digit'})
+        return new Date(parseInt(epoch)).toLocaleString('en-IN',
+            { day: '2-digit', month: 'short', year: 'numeric', hour12: true, hour: '2-digit', minute: '2-digit' })
     }
 
     handleChange = event => {
@@ -276,7 +284,8 @@ class Article extends Component {
         const { article, isFetching } = this.state
 
         return (
-            isFetching ? <LinearProgress /> :
+            isFetching ? <LinearProgress />
+                :
                 <div className={classes.container}>
                     <Typography variant='h4' className={classes.title}>
                         {article.title}
@@ -287,13 +296,13 @@ class Article extends Component {
                     <div className={classes.flexBox}>
                         <div className={classes.info}>
                             <Typography>
-                                {article.author.name}
+                                {article.author ? '' : article.author.name}
                             </Typography>
                             <Typography>
                                 {this.getDate(article.date)}
                             </Typography>
                         </div>
-                        {this.state.rating && this.state.rating.count &&
+                        {this.state.rating && this.state.rating.count && article.status === 'live' &&
                             <div className={classes.flexBox} >
                                 <StarRate style={{ color: '#FFBF00', margin: "0 10px 0 15px" }} />
                                 <Typography variant='h6'>
@@ -305,89 +314,102 @@ class Article extends Component {
                             </div>
                         }
                     </div>
-                    <div className={classes.content} dangerouslySetInnerHTML={{ __html: `${article.content}` }} />
+                    <div className='content' dangerouslySetInnerHTML={{ __html: `${article.content}` }} />
                     <div className={classes.endSection}>
                         <Dot />
                         <Dot />
                         <Dot />
                     </div>
-
-                    <div style={{ textAlign: 'center', margin: 10, }}>
-                        <Typography variant='h5'>Rate the article</Typography>
-                        <div className={classes.radioContainer}>
-                            <Radio
-                                checked={this.state.myRating === 1}
-                                onChange={this.handleChange}
-                                style={{ color: '#FF0000' }}
-                                value={1}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 2}
-                                onChange={this.handleChange}
-                                style={{ color: '#FF3400' }}
-                                value={2}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 3}
-                                onChange={this.handleChange}
-                                style={{ color: '#FF6900' }}
-                                value={3}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 4}
-                                onChange={this.handleChange}
-                                style={{ color: '#FF9E00' }}
-                                value={4}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 5}
-                                onChange={this.handleChange}
-                                value={5}
-                                style={{ color: '#FFD300' }}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 6}
-                                onChange={this.handleChange}
-                                value={6}
-                                style={{ color: '#e8f000' }}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 7}
-                                onChange={this.handleChange}
-                                value={7}
-                                style={{ color: '#eef602' }}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 8}
-                                onChange={this.handleChange}
-                                value={8}
-                                style={{ color: '#8DFF00' }}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 9}
-                                onChange={this.handleChange}
-                                value={9}
-                                style={{ color: '#58FF00' }}
-                            />
-                            <Radio
-                                checked={this.state.myRating === 10}
-                                onChange={this.handleChange}
-                                value={10}
-                                style={{ color: '#24FF00' }}
-                            />
-                        </div>
-                        {this.state.hasAlreadyRated ? <Typography gutterBottom variant='overline'>{`You have rated ${this.state.myRating}/10`}</Typography> :
-                            <div>
-                                {this.state.myRating &&
-                                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10, }}>
-                                        <h3 style={{ margin: 10 }}>{this.state.myRating}/10</h3>
-                                        <Button onClick={this.rate} color='primary' variant='outlined'>
-                                            {"Rate"}
-                                        </Button>
-                                    </div>
-                                }
+                    {article.status === 'live' &&
+                        <div style={{ textAlign: 'center', margin: 10, }}>
+                            <Typography variant='h5'>Rate the article</Typography>
+                            <div className={classes.radioContainer}>
+                                <Radio
+                                    checked={this.state.myRating === 1}
+                                    onChange={this.handleChange}
+                                    style={{ color: '#FF0000' }}
+                                    value={1}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 2}
+                                    onChange={this.handleChange}
+                                    style={{ color: '#FF3400' }}
+                                    value={2}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 3}
+                                    onChange={this.handleChange}
+                                    style={{ color: '#FF6900' }}
+                                    value={3}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 4}
+                                    onChange={this.handleChange}
+                                    style={{ color: '#FF9E00' }}
+                                    value={4}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 5}
+                                    onChange={this.handleChange}
+                                    value={5}
+                                    style={{ color: '#FFD300' }}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 6}
+                                    onChange={this.handleChange}
+                                    value={6}
+                                    style={{ color: '#e8f000' }}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 7}
+                                    onChange={this.handleChange}
+                                    value={7}
+                                    style={{ color: '#eef602' }}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 8}
+                                    onChange={this.handleChange}
+                                    value={8}
+                                    style={{ color: '#8DFF00' }}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 9}
+                                    onChange={this.handleChange}
+                                    value={9}
+                                    style={{ color: '#58FF00' }}
+                                />
+                                <Radio
+                                    checked={this.state.myRating === 10}
+                                    onChange={this.handleChange}
+                                    value={10}
+                                    style={{ color: '#24FF00' }}
+                                />
                             </div>
-                        }
+                            {this.state.hasAlreadyRated ? <Typography gutterBottom variant='overline'>{`You have rated ${this.state.myRating}/10`}</Typography> :
+                                <div>
+                                    {this.state.myRating &&
+                                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10, }}>
+                                            <h3 style={{ margin: 10 }}>{this.state.myRating}/10</h3>
+                                            <Button onClick={this.rate} color='primary' variant='outlined'>
+                                                {"Rate"}
+                                            </Button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div className={classes.tags}>
+                        {article.tags.map(tag => (
+                            <Chip
+                                key={tag}
+                                label={tag}
+                                variant='outlined'
+                                clickable
+                                className={classes.tag}
+                            />
+                        ))}
                     </div>
 
                     <div className={classes.endSection}>
@@ -395,48 +417,42 @@ class Article extends Component {
                         <Dot />
                         <Dot />
                     </div>
-                    <div className={classes.commentSection}>
-                        <Typography>Comments</Typography>
-                        <div className={classes.commentContainer}>
-                            <TextField
-                                multiline
-                                id="outlined-comment-input"
-                                placeholder="Write a comment"
-                                className={classes.commentTF}
-                                type="text"
-                                name="comment"
-                                margin="dense"
-                                variant="outlined"
-                                value={this.state.myComment}
-                                onChange={this.handleCommentChange}
-                            />
-                            {/* {this.state.isCommenting ?
-                                <div className={classes.loadingDots}>
-                                    <div className={classes.loadingDot} />
-                                    <div className={classes.loadingDot} />
-                                    <div className={classes.loadingDot} />
-                                </div>
-                                : */}
-                            <Fab size='medium' color="primary" className={classes.fab} onClick={this.comment} disabled={this.state.isCommenting}>
-                                <NearMe />
-                            </Fab>
-                            {/* } */}
+                    {article.status === 'live' &&
+                        <div className={classes.commentSection}>
+                            <Typography>Comments</Typography>
+                            <div className={classes.commentContainer}>
+                                <TextField
+                                    multiline
+                                    id="outlined-comment-input"
+                                    placeholder="Write a comment"
+                                    className={classes.commentTF}
+                                    type="text"
+                                    name="comment"
+                                    margin="dense"
+                                    variant="outlined"
+                                    value={this.state.myComment}
+                                    onChange={this.handleCommentChange}
+                                />
+                                <Fab size='medium' color="primary" className={classes.fab} onClick={this.comment} disabled={this.state.isCommenting}>
+                                    <NearMe />
+                                </Fab>
+                            </div>
+                            {!this.state.isCommentsFetching &&
+                                this.state.comments.map(comment => (
+                                    <div key={comment.id} className={classes.commentSheet}>
+                                        <hr className={classes.hr} />
+                                        <Typography color='primary'>{`${comment.posted_by.name} (${comment.posted_by.dpsu.toUpperCase()})`}</Typography>
+                                        <Typography color='default' className={classes.commentDate}>{`${this.getDateTime(comment.posted_on)}`}</Typography>
+                                        <Typography className={classes.commentBox} variant='body1'>{comment.comment}</Typography>
+                                    </div>
+                                ))
+                            }
                         </div>
-                        {!this.state.isCommentsFetching &&
-                            this.state.comments.map(comment => (
-                                <div key={comment.id} className={classes.commentSheet}>
-                                    <hr className={classes.hr} />
-                                    <Typography color='primary'>{`${comment.posted_by.name} (${comment.posted_by.dpsu.toUpperCase()})`}</Typography>
-                                    <Typography color='default' className={classes.commentDate}>{`${this.getDateTime(comment.posted_on)}`}</Typography>
-                                    <Typography className={classes.commentBox} variant='body1'>{comment.comment}</Typography>
-                                </div>
-                            ))
-                        }
-                    </div>
+                    }
                     {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
                     <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
 
-                </div>
+                </div >
         )
     }
 }

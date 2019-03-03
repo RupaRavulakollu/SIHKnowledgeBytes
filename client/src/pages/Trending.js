@@ -5,10 +5,8 @@ import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Grid from '@material-ui/core/Grid'
 
 import ArticleList from './ArticleList'
-import ArticleCard from '../components/ArticleCard'
 import Snacky from '../components/Snacky'
 
 const styles = theme => ({
@@ -111,7 +109,7 @@ class Trending extends Component {
 
   render() {
     const { classes } = this.props
-    const { value, featuredPosts } = this.state
+    const { value } = this.state
 
     return (
       <div>
