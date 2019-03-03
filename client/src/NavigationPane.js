@@ -19,12 +19,15 @@ import MenuList from '@material-ui/core/MenuList';
 
 import Search from '@material-ui/icons/SearchRounded';
 import Add from '@material-ui/icons/Add';
+import Gavel from '@material-ui/icons/Gavel';
 
 import Trending from './pages/Trending'
 import NewByte from './pages/NewByte'
 import Snacky from './components/Snacky'
 import Article from './pages/Article'
+import ModerateBytes from './pages/ModerateBytes'
 import ModeratorHome from "./pages/ModeratorHome";
+import ModerationArticle from "./pages/ModerationArticle";
 import Resources from "./pages/Resources";
 import Profile from "./pages/Profile";
 
@@ -233,6 +236,17 @@ class NavigationPane extends Component {
                                     </Hidden>
                                 </div>
                             }
+                            {window.userDetails.moderator &&
+                                <Button title={"Moderate"} variant='outlined'
+                                    classes={{
+                                        outlined: classes.newButton
+                                    }}
+                                    color='primary'
+                                    component={Link} to='/moderate'
+                                >
+                                    <Gavel />
+                                </Button>
+                            }
 
                             <Avatar alt="User Actions"
                                 title={'Profile'}
@@ -296,6 +310,12 @@ class NavigationPane extends Component {
                             {
                                 user.moderator &&
                                 <Route path='/resources' render={(props) => (<Resources  {...props} hideSearchAndNew={this.hideSearchAndNew} />)} />
+                            }
+                            {user.moderator &&
+                                <Route path="/moderate" component={ModerateBytes} exact />
+                            }
+                            {user.moderator &&
+                                <Route path="/moderate/:id" component={ModerationArticle} exact />
                             }
                             <Route path="/trending" render={(props) => (<Trending  {...props} showSearchAndNew={this.showSearchAndNew} />)} />
                             <Route path="/profile" component={Profile} exact />

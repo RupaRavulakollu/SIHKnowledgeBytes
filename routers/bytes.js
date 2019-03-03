@@ -61,6 +61,7 @@ bytes.get('/mine', (req, res) => {
     })
 })
 
+bytes.use('/moderation', require('./moderation'))
 
 // Comments
 bytes.get('/:id/comments', (req, res) => { //Get all comments
@@ -160,7 +161,7 @@ bytes.get('/:id/rating', (req, res) => { //Get article rating
 })
 
 bytes.get('/:id', (req, res, next) => { //Get content of one article
-    if (!req.params.id) res.status(400).send({ error: "The requeest parameter is missing" })
+    if (!req.params.id) res.status(400).send({ error: "The request parameter is missing" })
     else next()
 }, (req, res) => {
     var query = {

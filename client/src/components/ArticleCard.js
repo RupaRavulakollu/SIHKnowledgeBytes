@@ -35,12 +35,17 @@ function getStyle(state) {
 class ArticleCard extends Component {
 
     render() {
-        const { post, classes, mine } = this.props
+        const { post, classes, mine, moderation } = this.props
+        var pathname
+        if(moderation && window.userDetails.moderator)
+            pathname = `/moderate/${post.id}`
+        else
+            pathname = `/byte/${post.id}`
         return (
             <Grid item key={post.id} xs={12} md={6}
                 className={classes.container}
                 component={Link}
-                to={{ pathname: `/byte/${post.id}` }}
+                to={{ pathname: pathname }}
             >
                 <Typography variant="h5" className={classes.title}>
                     {post.title}
