@@ -45,6 +45,9 @@ const styles = theme => ({
     },
     responseButton: {
         margin: '16px',
+    },
+    content: {
+        wordBreak: 'break-all',
     }
 })
 

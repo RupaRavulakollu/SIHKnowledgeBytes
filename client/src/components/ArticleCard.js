@@ -47,6 +47,9 @@ const styles = theme => ({
         '&:hover': {
             color: theme.palette.primary.dark
         }
+    },
+    content: {
+        wordBreak: 'break-all',
     }
 });
 
