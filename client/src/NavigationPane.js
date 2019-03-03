@@ -30,6 +30,7 @@ import ModeratorHome from "./pages/ModeratorHome";
 import ModerationArticle from "./pages/ModerationArticle";
 import Resources from "./pages/Resources";
 import Profile from "./pages/Profile";
+import Drafts from './pages/Drafts';
 
 const styles = theme => ({
     root: {
@@ -281,7 +282,7 @@ class NavigationPane extends Component {
                                                     {window.userDetails.moderator &&
                                                         <MenuItem component={Link} to='/resources'>Resources</MenuItem>
                                                     }
-                                                    <MenuItem>My drafts</MenuItem>
+                                                    <MenuItem component={Link} to='/drafts'>My drafts</MenuItem>
                                                     <MenuItem onClick={this.logout}>Logout</MenuItem>
                                                 </MenuList>
                                             </ClickAwayListener>
@@ -319,6 +320,7 @@ class NavigationPane extends Component {
                             }
                             <Route path="/trending" render={(props) => (<Trending  {...props} showSearchAndNew={this.showSearchAndNew} />)} />
                             <Route path="/profile" component={Profile} exact />
+                            <Route path="/drafts" component={Drafts} exact />
                             <Route path="/byte/:id" component={Article} exact />
                             <Route path="/new-byte" component={NewBytePreLoader} exact />
                             <Route path="/new-byte/:id" component={NewByte} />
