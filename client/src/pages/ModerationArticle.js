@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 
 import Dot from '../components/Dot';
 import Snacky from '../components/Snacky'
+import { CircularProgress } from '@material-ui/core';
 
 
 const styles = theme => ({
@@ -53,6 +54,9 @@ class ModerationArticle extends Component {
         this.state = {
             article: {},
             isFetching: true,
+            isDeciding: false,
+            decided: false,
+            decision: '',
             snackyOpen: false,
             snackyMessage: 'Just saying Hi!',
             snackyErrorType: false,
@@ -101,20 +105,30 @@ class ModerationArticle extends Component {
     };
 
     decideApplication = (decision) => {
-        console.log(decision)
+        this.setState({
+            isDeciding: true
+        })
         axios.post(`/api/bytes/moderation/${this.props.match.params.id}/decision`, { decision: decision })
             .then(_res => {
                 window.location = '/moderate'
+                this.setState({
+                    decided: true, decision: decision
+                })
             })
             .catch(err => {
                 console.log(err)
                 this.callSnacky(err.repsonse.data.error, true)
             })
+            .finally(() => {
+                this.setState({
+                    isDeciding: false
+                })
+            })
     }
 
     render() {
         const { classes } = this.props
-        const { article, isFetching } = this.state
+        const { article, isFetching, isDeciding, decided, decision } = this.state
         return (
             isFetching ? <LinearProgress /> :
                 <div className={classes.container}>
@@ -140,14 +154,28 @@ class ModerationArticle extends Component {
                         <Dot />
                         <Dot />
                     </div>
-                    <div className={classes.responseContainer}>
+                    {!isDeciding && !decided && <div className={classes.responseContainer}>
                         <Button className={classes.responseButton} variant='outlined' style={{ color: 'red', borderColor: 'red' }} onClick={() => {
                             this.decideApplication('rejected')
                         }}>Decline</Button>
                         <Button className={classes.responseButton} variant='outlined' style={{ color: '#02b102', borderColor: '#02b102' }} onClick={() => {
                             this.decideApplication('live')
                         }}>Approve</Button>
-                    </div>
+                    </div>}
+                    {isDeciding && !decided &&
+                        <div className={classes.responseContainer}>
+                            <CircularProgress />
+                        </div>
+                    }
+                    {decided &&
+                        <div className={classes.responseContainer}>
+                            <Typography variant='overline' style={{ fontSize: 20 }}>
+                                {decision === 'live' ? 'APPROVED' : 'DECLINED'}
+                            </Typography>
+                        </div>
+                    }
+
+
                     {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
                     <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />
                 </div>

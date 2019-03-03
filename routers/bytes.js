@@ -172,7 +172,7 @@ bytes.get('/:id', (req, res, next) => { //Get content of one article
         inner join authors auth on auth.id = art.author
         inner join dpsu dpsu on dpsu.id = auth.dpsu
         left join ratings r on r.article=$1 and r.rated_by=$2
-        where art.id=$1 and art.state='live'`,
+        where art.id=$1 and case when art.author=$2 then true else art.state='live' end`,
         values: [req.params.id, req.session.user.id],
     }
     pool.query(query, (err, result) => {

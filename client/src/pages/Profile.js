@@ -9,40 +9,51 @@ import ArticleCard from '../components/ArticleCard'
 
 const styles = theme => ({
   avatar: {
-    margin: '50px',
     width: 150,
     height: 150,
-    marginLeft: '200px',
-  },
-  container: {
-    alignItems: 'center',
-    display: 'flex',
-
-  },
-  divider: {
-    width: '600px',
-    marginLeft: '150px',
-  },
-
-  textStyle: {
-    color: 'grey',
-    fontStyle: 'italic',
-    fontSize: '15px',
+    margin: 16
   },
   gridContainer: {
-    padding: "20px 10px",
-    marginLeft:'150px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    [theme.breakpoints.down('md')]: {
+      padding: '0 8px'
+    }
+  },
+  userInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    margin: 16
+  },
+  divider: {
+    width: '60%',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+    },
+  },
+  userName: {
+    margin: '4px 0',
+    fontWeight: 400,
+    fontSize: '20px',
+    color: '#212121'
+  },
+  textStyle: {
+    color: 'grey',
+    fontSize: '16px',
+    margin: '4px 0',
+    fontWeight: 400,
   },
 });
 
-class App extends Component {
+class Profile extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       featuredPosts: [],
       value: 0,
-      //dpsus: ['hal', 'bel', 'bdl', 'beml', 'midhani', 'mdl', 'grse', 'gsl', 'hsl'],
       snackyOpen: false,
       snackyMessage: 'Just saying Hi!',
       snackyErrorType: false,
@@ -75,34 +86,26 @@ class App extends Component {
     return (
 
       <div>
-        <div className={classes.container}>
-
-          <div>
-            <Avatar alt="User Actions"
-              src="https://ruparavulakollu.000webhostapp.com/images/avatar.jpg"
-              className={classes.avatar}
-            />
-
-          </div>
-          <div>
-            <h1>{user.name}</h1>
+        <div className={classes.gridContainer}>
+          <Avatar alt="User Actions"
+            src="https://ruparavulakollu.000webhostapp.com/images/avatar.jpg"
+            className={classes.avatar}
+          />
+          <div className={classes.userInfo}>
+            <h3 className={classes.userName}>{user.name}</h3>
             <h3 className={classes.textStyle}>{user.designation}</h3>
             <h3 className={classes.textStyle}>{user.dpsuName}</h3>
-
           </div>
-
         </div>
-        <Divider className={classes.divider} />
+        <Divider className={classes.divider} style={{ margin: 'auto' }} />
         <Grid container direction='column' spacing={24} className={classes.gridContainer}>
           {featuredPosts.map((post, i) => (
-            <ArticleCard key={i} post={post} mine/>
+            <ArticleCard key={i} post={post} mine />
           ))}
         </Grid>
       </div>
-
-
     );
   }
 }
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(Profile);

@@ -92,22 +92,22 @@ class Trending extends Component {
 
   callSnacky = (message, isError) => {
     if (isError && !message) {
-        message = "Something's Wrong"
+      message = "Something's Wrong"
     }
     this.setState({
-        snackyMessage: message,
-        snackyOpen: true,
-        snackyErrorType: isError,
+      snackyMessage: message,
+      snackyOpen: true,
+      snackyErrorType: isError,
     })
-}
+  }
 
-handleSnackyClose = (_event, reason) => {
+  handleSnackyClose = (_event, reason) => {
     if (reason === 'clickaway') {
-        return;
+      return;
     }
 
     this.setState({ snackyOpen: false });
-};
+  };
 
   render() {
     const { classes } = this.props
@@ -142,13 +142,7 @@ handleSnackyClose = (_event, reason) => {
         </Tabs>
         <main>
           <Route path={`${this.props.match.path}/:dpsu`} component={ArticleList} />
-          <Route exact path={`${this.props.match.path}`} render={() => {
-            return <Grid container direction='column' spacing={24} className={classes.gridContainer}>
-              {featuredPosts.map((post, i) => (
-                <ArticleCard key={i} post={post} />
-              ))}
-            </Grid>
-          }} />
+          <Route exact path={`${this.props.match.path}`} component={ArticleList} />
         </main>
         {/* Lo and behold the legendary Snacky - Conveyor of the good and bad things, clear and concise */}
         <Snacky message={this.state.snackyMessage} open={this.state.snackyOpen} onClose={this.handleSnackyClose} error={this.state.snackyErrorType} />

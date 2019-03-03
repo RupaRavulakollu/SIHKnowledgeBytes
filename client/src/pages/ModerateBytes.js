@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import axios from 'axios';
 
 import ArticleCard from '../components/ArticleCard'
+import { LinearProgress, Typography } from '@material-ui/core';
 
 const styles = theme => ({
     gridContainer: {
@@ -16,6 +17,7 @@ class ModerateBytes extends Component {
         super(props)
         this.state = {
             bytes: [],
+            showLoader: true,
         }
     }
 
@@ -26,17 +28,24 @@ class ModerateBytes extends Component {
                     bytes: res.data,
                 })
             })
+            .finally(() => {
+                this.setState({
+                    showLoader: false,
+                })
+            })
     }
 
     render() {
-        var { bytes } = this.state
+        var { bytes, showLoader } = this.state
         var { classes } = this.props
         return (
-            <Grid container direction='column' spacing={24} className={classes.gridContainer}>
-                {bytes.map((post, i) => (
-                    <ArticleCard key={i} post={post} moderation/>
-                ))}
-            </Grid>)
+            showLoader ? <LinearProgress /> :
+                bytes.length === 0 ? <Typography variant='overline' style={{ fontSize: 20 }}>No articles for moderation</Typography> :
+                    <Grid container direction='column' spacing={24} className={classes.gridContainer}>
+                        {bytes.map((post, i) => (
+                            <ArticleCard key={i} post={post} moderation />
+                        ))}
+                    </Grid>)
     }
 }
 
