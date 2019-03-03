@@ -75,9 +75,7 @@ class ArticleCard extends Component {
                 <Typography variant="h5" className={classes.title}>
                     {post.title}
                 </Typography>
-                <Typography variant="subtitle1" paragraph className={classes.description} color="textSecondary"
-                    component={Link}
-                    to={{ pathname: `/byte/${post.id}` }}>
+                <Typography variant="subtitle1" paragraph className={classes.description} color="textSecondary">
                     {post.description}
                 </Typography>
                 <div>
