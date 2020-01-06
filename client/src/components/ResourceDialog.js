@@ -278,7 +278,7 @@ class ResourceDialog extends Component {
             <Dialog maxWidth='md' fullWidth open={showDetails} onClose={hideDetails}>
                 <DialogContent className={classes.dialogContent}>
                     <div className={classes.dialogHeadContent}>
-                        <Avatar src={resource.type === 'infra' ? 'http://icons-for-free.com/free-icons/png/512/1054957.png' : 'https://ruparavulakollu.000webhostapp.com/images/avatar.jpg'} className={classes.avatar} />
+                        <Avatar src={resource.type === 'infra' ? 'http://icons-for-free.com/free-icons/png/512/1054957.png' : 'https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg'} className={classes.avatar} />
                         <div className={classes.dialogSubHeadContent}>
                             <Typography variant="h5">
                                 {resource.name}

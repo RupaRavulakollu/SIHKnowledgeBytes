@@ -111,7 +111,7 @@ class Profile extends Component {
       <div>
         <div className={classes.gridContainer}>
           <Avatar alt="User Actions"
-            src="https://ruparavulakollu.000webhostapp.com/images/avatar.jpg"
+            src="https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg"
             className={classes.avatar}
           />
           <div className={classes.userInfo}>

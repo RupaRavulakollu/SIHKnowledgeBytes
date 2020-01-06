@@ -258,7 +258,7 @@ class NavigationPane extends Component {
 
                             <Avatar alt="User Actions"
                                 title={'Profile'}
-                                src="https://ruparavulakollu.000webhostapp.com/images/avatar.jpg"
+                                src="https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg"
                                 className={classes.avatar}
                                 aria-owns={openMenu ? 'menu-list-grow' : undefined}
                                 aria-haspopup="true"
