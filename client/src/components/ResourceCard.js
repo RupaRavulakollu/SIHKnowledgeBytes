@@ -125,7 +125,7 @@ class ResourceCard extends Component {
             <div className={classes.container}>
                 <Card className={classes.card} onClick={this.showDetails}>
                     <CardMedia
-                        image={resource.type === 'infra' ? 'http://icons-for-free.com/free-icons/png/512/1054957.png' : 'https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg'}
+                        image={resource.type === 'infra' ? 'https://www.capturehighered.com/wp-content/uploads/2019/02/The-Call.jpg' : 'https://greendestinations.org/wp-content/uploads/2019/05/avatar-exemple.jpg'}
                         component="img"
                         alt="Resource Image"
                         className={classes.media}
