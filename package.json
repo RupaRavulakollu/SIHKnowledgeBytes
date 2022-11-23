@@ -28,7 +28,7 @@
     "path": "^0.12.7",
     "pg": "^7.8.1",
     "rimraf": "^2.6.3",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.5.0"
   },
   "devDependencies": {
     "dotenv": "^6.2.0"
